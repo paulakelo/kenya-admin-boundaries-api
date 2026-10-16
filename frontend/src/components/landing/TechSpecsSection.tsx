@@ -25,7 +25,7 @@ export const TechSpecsSection: React.FC = () => {
           </div>
 
           {/* Accessible Tab List */}
-          <div role="tablist" aria-label="Architecture Specifications" className="space-y-2">
+          <div role="tablist" aria-label="Architecture Specifications" className="space-y-2.5">
             {TECHNICAL_SPECS.map((tab) => {
               const isSelected = activeTabId === tab.id;
               return (
@@ -38,15 +38,17 @@ export const TechSpecsSection: React.FC = () => {
                   onClick={() => setActiveTabId(tab.id)}
                   className={`w-full text-left p-4 rounded-lg border transition-all cursor-pointer text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                     isSelected
-                      ? "bg-surface-raised border-accent text-text-heading shadow-xs"
-                      : "bg-surface-base border-border-subtle hover:border-border-strong text-text-muted hover:text-text-body"
+                      ? "bg-surface-raised border-2 border-accent text-text-heading shadow-md"
+                      : "bg-surface-raised/80 border border-border-strong hover:border-accent/50 text-text-body hover:bg-surface-overlay"
                   }`}
                 >
                   <div className="flex items-center gap-2 font-mono font-bold text-text-heading mb-1.5">
-                    <span className="text-accent">{tab.number}</span>
+                    <span className={isSelected ? "text-accent" : "text-text-muted"}>{tab.number}</span>
                     <span>{tab.title}</span>
                   </div>
-                  <p className="text-text-muted leading-relaxed pl-5">{tab.narrative}</p>
+                  <p className={`leading-relaxed pl-5 ${isSelected ? "text-text-body" : "text-text-muted"}`}>
+                    {tab.narrative}
+                  </p>
                 </button>
               );
             })}
@@ -58,22 +60,21 @@ export const TechSpecsSection: React.FC = () => {
           id={`panel-${activeTab.id}`}
           role="tabpanel"
           aria-labelledby={`tab-${activeTab.id}`}
-          className="lg:col-span-7 rounded-xl overflow-hidden border border-border-subtle bg-surface-sunken shadow-xl flex flex-col justify-between"
+          className="lg:col-span-7 rounded-xl overflow-hidden border border-border-strong bg-surface-sunken shadow-xl flex flex-col justify-between"
         >
           {/* Terminal Window Top Bar */}
-          <div className="px-5 py-3 border-b border-border-subtle bg-surface-raised flex items-center justify-between font-mono">
+          <div className="px-5 py-3 border-b border-border-strong bg-surface-raised flex items-center justify-between font-mono">
             <div className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-full bg-[#EF4444]/80 inline-block" aria-hidden="true" />
-              <span className="h-3 w-3 rounded-full bg-[#F59E0B]/80 inline-block" aria-hidden="true" />
-              <span className="h-3 w-3 rounded-full bg-[#10B981]/80 inline-block" aria-hidden="true" />
-              <span className="ml-2 text-xs text-text-muted">{activeTab.terminalContext}</span>
+              <span className="h-3 w-3 rounded-full bg-[#EF4444]/90 inline-block" aria-hidden="true" />
+              <span className="h-3 w-3 rounded-full bg-[#F59E0B]/90 inline-block" aria-hidden="true" />
+              <span className="h-3 w-3 rounded-full bg-[#10B981]/90 inline-block" aria-hidden="true" />
+              <span className="ml-2 text-xs text-text-heading font-semibold tracking-wide">
+                {activeTab.title}
+              </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-accent font-mono font-bold">
+              <span className="text-xs text-text-muted font-mono font-medium">
                 FIG. {activeTab.id.toUpperCase()}
-              </span>
-              <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono text-[10px] border border-emerald-500/20">
-                ● {activeTab.statusLabel}
               </span>
             </div>
           </div>
@@ -144,14 +145,14 @@ export const TechSpecsSection: React.FC = () => {
           </div>
 
           {/* Terminal Footer */}
-          <div className="px-5 py-3 border-t border-border-subtle bg-surface-raised flex items-center justify-between text-xs text-text-muted font-mono">
+          <div className="px-5 py-3.5 border-t border-border-strong bg-surface-raised flex items-center justify-between text-xs text-text-muted font-mono">
             <span>WGS 84 (EPSG:4326) // PostGIS 3.3 GIST</span>
             <Link
               to="/docs"
-              className="text-accent hover:underline flex items-center gap-1 font-semibold focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded-sm"
+              className="px-4 py-2 rounded-md bg-accent text-black font-bold text-xs uppercase tracking-wider hover:bg-lime-300 active:scale-95 transition-all flex items-center gap-1.5 shadow-md shadow-accent/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
-              <span>View Full Schema Docs</span>
-              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Explore API Docs &amp; Console</span>
+              <ArrowRight className="h-3.5 w-3.5 text-black" aria-hidden="true" />
             </Link>
           </div>
         </div>

@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 
 export const CtaSection: React.FC = () => {
   return (
-    <section aria-labelledby="cta-heading" className="px-6 max-w-7xl mx-auto py-12 border-t border-border-subtle">
-      <div className="rounded-xl bg-surface-raised border border-border-subtle p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
+    <section aria-labelledby="cta-heading" className="px-6 max-w-7xl mx-auto py-12 border-t border-border-strong">
+      <div className="rounded-xl bg-surface-raised border border-border-strong p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md">
         <div>
           <h2 id="cta-heading" className="text-2xl md:text-3xl font-extrabold text-text-heading">
             Ready to Integrate Kenya Administrative Boundaries?
@@ -16,7 +16,7 @@ export const CtaSection: React.FC = () => {
         <div className="flex items-center gap-3 shrink-0">
           <Link
             to="/docs"
-            className="px-5 py-2.5 rounded-md bg-accent text-black font-bold text-xs uppercase tracking-wider hover:bg-lime-300 active:scale-95 transition-all shadow-md shadow-accent/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+            className="px-6 py-3 rounded-md bg-accent text-black font-extrabold text-xs uppercase tracking-wider hover:bg-lime-300 active:scale-95 transition-all shadow-lg shadow-accent/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
           >
             Launch API Console
           </Link>

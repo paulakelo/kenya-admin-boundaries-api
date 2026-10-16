@@ -35,7 +35,7 @@ export const HeroSection: React.FC = () => {
       <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
         <Link
           to={HERO_CONTENT.primaryCta.path}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-accent text-black font-bold text-xs uppercase tracking-wider hover:bg-lime-300 active:scale-95 transition-all shadow-md shadow-accent/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+          className="flex items-center gap-2.5 px-6 py-3 rounded-md bg-accent text-black font-extrabold text-xs uppercase tracking-wider hover:bg-lime-300 active:scale-95 transition-all shadow-lg shadow-accent/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
         >
           <Code2 className="h-4 w-4 text-black" aria-hidden="true" />
           <span>{HERO_CONTENT.primaryCta.label}</span>
@@ -44,7 +44,7 @@ export const HeroSection: React.FC = () => {
 
         <Link
           to={HERO_CONTENT.secondaryCta.path}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-surface-raised border border-border-strong text-text-heading font-bold text-xs uppercase tracking-wider hover:bg-surface-overlay hover:border-accent/60 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+          className="flex items-center gap-2.5 px-6 py-3 rounded-md bg-surface-raised border border-border-strong text-text-heading font-bold text-xs uppercase tracking-wider hover:bg-surface-overlay hover:border-accent transition-all shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
         >
           <MapPin className="h-4 w-4 text-accent" aria-hidden="true" />
           <span>{HERO_CONTENT.secondaryCta.label}</span>

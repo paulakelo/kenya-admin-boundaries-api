@@ -16,9 +16,7 @@ export interface TechSpecTab {
   number: string;
   title: string;
   narrative: string;
-  terminalContext: string;
   codeSnippet: string;
-  statusLabel: string;
 }
 
 export const HERO_CONTENT = {
@@ -90,8 +88,6 @@ export const TECHNICAL_SPECS: TechSpecTab[] = [
     title: "GOLANG CLEAN ARCHITECTURE",
     narrative:
       "Strict decoupling between domain entities, sqlc type-safe repositories, caching interfaces, and HTTP transport handlers.",
-    terminalContext: "bash: ~/kenya-api/routes.sh",
-    statusLabel: "ACTIVE",
     codeSnippet: `// REST API Core Route Registry & GeoJSON Output
 GET  /api/v1/counties                     GeoJSON FeatureCollection (47)
 GET  /api/v1/counties/:slug               GeoJSON Feature (Single Polygon)
@@ -107,8 +103,6 @@ GET  /api/v1/wards                        JSON Array (1,450 Wards)`,
     title: "POSTGIS 3.3 SPATIAL INDEXING",
     narrative:
       "2D GIST indexes enable sub-millisecond bounding box filtering and ST_Intersects spatial polygon containment checks.",
-    terminalContext: "psql: spatial_pg (postgis 3.3)",
-    statusLabel: "ACTIVE",
     codeSnippet: `-- High-Performance 2D GIST Spatial Intersection Query
 SELECT county_code, county_name,
   ST_AsGeoJSON(geom)::json AS geometry
@@ -124,8 +118,6 @@ Execution Time: 0.428 ms (sub-millisecond spatial lookup)`,
     title: "REDIS IN-MEMORY DISTRIBUTION",
     narrative:
       "Pre-computed GeoJSON representations cached with fixed-window rate limiting to ensure 99.99% uptime under high traffic.",
-    terminalContext: "redis-cli: spatial_redis (in-memory)",
-    statusLabel: "ACTIVE",
     codeSnippet: `# Redis 7 In-Memory Multi-Tier Spatial Cache
 $ redis-cli -p 6379
 127.0.0.1:6379> GET geo:county:KE047:geojson

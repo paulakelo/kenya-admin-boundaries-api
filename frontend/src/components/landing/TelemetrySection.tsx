@@ -11,7 +11,7 @@ export const TelemetrySection: React.FC = () => {
         {TELEMETRY_STATS.map((stat) => (
           <div
             key={stat.id}
-            className="p-4 rounded-lg bg-surface-raised border border-border-subtle flex flex-col justify-between"
+            className="p-4 rounded-lg bg-surface-raised border border-border-strong hover:border-accent/40 hover:bg-surface-overlay transition-all shadow-xs flex flex-col justify-between"
           >
             <dt className="font-mono text-xs uppercase tracking-wider text-text-muted">
               {stat.label}
