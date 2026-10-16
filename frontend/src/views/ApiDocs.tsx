@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import {
   Code,
@@ -10,6 +11,8 @@ import {
   Database,
   Clock,
   Server,
+  ArrowLeft,
+  Map as MapIcon,
 } from "lucide-react";
 
 
@@ -369,13 +372,34 @@ export default function ApiDocs() {
       {/* Sidebar: Endpoints list grouped by category */}
       <div className="w-[320px] min-w-[320px] border-r border-border bg-card/60 flex flex-col h-full overflow-hidden">
         <div className="p-4 border-b border-border">
-          <div className="flex items-center gap-2">
-            <Server className="h-4 w-4 text-primary" />
-            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              API Reference v1
-            </span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Server className="h-4 w-4 text-primary" />
+              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                API Reference v1
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-xs font-mono">
+              <Link
+                to="/"
+                className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 text-[11px]"
+                title="Back to Overview"
+              >
+                <ArrowLeft className="h-3 w-3" />
+                <span>Home</span>
+              </Link>
+              <span className="text-muted-foreground/30">•</span>
+              <Link
+                to="/map"
+                className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 text-[11px]"
+                title="Open Map Explorer"
+              >
+                <MapIcon className="h-3 w-3" />
+                <span>Map</span>
+              </Link>
+            </div>
           </div>
-          <p className="text-[11px] text-muted-foreground mt-1">
+          <p className="text-[11px] text-muted-foreground mt-1.5">
             Base URL: <code className="text-primary font-mono font-semibold">http://localhost:18080</code>
           </p>
         </div>

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import type { FeatureCollection } from "geojson";
 import KenyaMap from "../components/KenyaMap";
 import LayerTabs from "../components/LayerTabs";
 import Sidebar from "../components/Sidebar";
 import { Badge } from "@/components/ui/badge";
-import { Layers, X } from "lucide-react";
+import { Layers, X, ArrowLeft, BookOpen } from "lucide-react";
 
 
 const API_BASE = "http://localhost:18080/api/v1";
@@ -89,15 +90,35 @@ export default function Playground() {
           onBasemapChange={setBasemap}
         />
 
-        {/* Toggle Sidebar floating button */}
-        <button
-          onClick={() => setIsSidebarOpen((prev) => !prev)}
-          className="absolute top-4 left-4 z-[1000] p-2 rounded-lg bg-card/90 backdrop-blur-md border border-border text-foreground hover:bg-accent shadow-md transition-all text-xs flex items-center gap-1.5"
-          title="Toggle Sidebar"
-        >
-          <Layers className="h-3.5 w-3.5 text-primary" />
-          <span className="font-semibold">{isSidebarOpen ? "Hide Sidebar" : "Show Explorer"}</span>
-        </button>
+        {/* Toggle Sidebar & Back Links floating toolbar */}
+        <div className="absolute top-4 left-4 z-[1000] flex items-center gap-1.5">
+          <button
+            onClick={() => setIsSidebarOpen((prev) => !prev)}
+            className="p-2 rounded-lg bg-card/90 backdrop-blur-md border border-border text-foreground hover:bg-accent shadow-md transition-all text-xs flex items-center gap-1.5"
+            title="Toggle Sidebar"
+          >
+            <Layers className="h-3.5 w-3.5 text-primary" />
+            <span className="font-semibold">{isSidebarOpen ? "Hide Sidebar" : "Show Explorer"}</span>
+          </button>
+
+          <Link
+            to="/"
+            className="p-2 rounded-lg bg-card/90 backdrop-blur-md border border-border text-foreground hover:bg-accent shadow-md transition-all text-xs flex items-center gap-1 font-semibold"
+            title="Back to Overview"
+          >
+            <ArrowLeft className="h-3.5 w-3.5 text-primary" />
+            <span>Home</span>
+          </Link>
+
+          <Link
+            to="/docs"
+            className="p-2 rounded-lg bg-card/90 backdrop-blur-md border border-border text-foreground hover:bg-accent shadow-md transition-all text-xs flex items-center gap-1 font-semibold"
+            title="Open API Docs & Console"
+          >
+            <BookOpen className="h-3.5 w-3.5 text-primary" />
+            <span>Docs</span>
+          </Link>
+        </div>
 
         {/* Selected Polygon Info Floating Pill */}
         {selectedCode && (
