@@ -211,23 +211,25 @@ export default function Sidebar({
                     <div className="space-y-2.5">
                       {/* Sub-view toggle (Sub-Counties vs Constituencies) */}
                       <div className="flex items-center justify-between pt-1">
-                        <div className="flex gap-1 bg-muted p-0.5 rounded text-[10px]">
+                        <div className="flex gap-1 bg-[#141724] p-1 rounded-md text-[10px] border border-white/10 w-full">
                           <button
+                            type="button"
                             onClick={() => setViewDetail("subcounties")}
-                            className={`px-2 py-0.5 rounded font-medium transition-all ${
+                            className={`flex-1 py-1 rounded font-medium transition-all text-center ${
                               viewDetail === "subcounties"
-                                ? "bg-background text-foreground shadow-xs"
-                                : "text-muted-foreground hover:text-foreground"
+                                ? "bg-[#D1FF00] text-[#0D0E15] font-bold shadow-xs"
+                                : "text-zinc-400 hover:text-white hover:bg-white/5"
                             }`}
                           >
                             Sub-Counties ({subCountiesList ? subCountiesList.length : "…"})
                           </button>
                           <button
+                            type="button"
                             onClick={() => setViewDetail("constituencies")}
-                            className={`px-2 py-0.5 rounded font-medium transition-all ${
+                            className={`flex-1 py-1 rounded font-medium transition-all text-center ${
                               viewDetail === "constituencies"
-                                ? "bg-background text-foreground shadow-xs"
-                                : "text-muted-foreground hover:text-foreground"
+                                ? "bg-rose-500 text-white font-bold shadow-xs"
+                                : "text-zinc-400 hover:text-white hover:bg-white/5"
                             }`}
                           >
                             Constituencies ({constituencyList ? constituencyList.length : "…"})
@@ -237,27 +239,27 @@ export default function Sidebar({
 
                       {/* Content Section */}
                       {loadingCode === code ? (
-                        <div className="flex items-center gap-2 py-3 text-xs text-muted-foreground justify-center">
-                          <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                        <div className="flex items-center gap-2 py-3 text-xs text-zinc-400 justify-center">
+                          <Loader2 className="h-3.5 w-3.5 animate-spin text-[#D1FF00]" />
                           <span>Loading hierarchy from API...</span>
                         </div>
                       ) : viewDetail === "subcounties" ? (
                         subCountiesList && subCountiesList.length > 0 ? (
-                          <div className="max-h-40 overflow-y-auto pr-1 space-y-1">
+                          <div className="max-h-48 overflow-y-auto pr-1 space-y-1">
                             {subCountiesList.map((sc) => (
                               <div
                                 key={sc.sub_county_code}
-                                className="text-[11px] text-foreground/80 pl-2.5 py-1 border-l-2 border-primary/30 hover:border-primary hover:text-foreground transition-colors flex items-center justify-between rounded-r bg-muted/20"
+                                className="text-[11px] text-zinc-200 pl-2.5 pr-2 py-1.5 border-l-2 border-[#D1FF00]/50 hover:border-[#D1FF00] hover:text-white hover:bg-[#D1FF00]/10 transition-colors flex items-center justify-between rounded-r bg-[#161926]"
                               >
-                                <span>{sc.sub_county_name}</span>
-                                <span className="text-[9px] font-mono text-muted-foreground">
+                                <span className="font-medium truncate">{sc.sub_county_name}</span>
+                                <span className="text-[9px] font-mono text-zinc-400 shrink-0 ml-1.5">
                                   {sc.sub_county_code}
                                 </span>
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <p className="text-[11px] text-muted-foreground italic py-1">
+                          <p className="text-[11px] text-zinc-400 italic py-1">
                             Click to query sub-counties
                           </p>
                         )
@@ -279,15 +281,19 @@ export default function Sidebar({
                                   }}
                                   className={`w-full text-left text-[11px] pl-2.5 pr-2 py-1.5 border-l-2 transition-all flex items-center justify-between rounded-r group cursor-pointer ${
                                     isCSelected
-                                      ? "border-rose-500 bg-rose-500/20 text-rose-300 font-semibold"
-                                      : "border-rose-500/40 text-foreground/80 hover:border-rose-500 hover:text-foreground hover:bg-rose-500/10"
+                                      ? "border-rose-400 bg-rose-500/25 text-white font-semibold shadow-xs"
+                                      : "border-rose-500/50 bg-[#161926] text-zinc-200 hover:border-rose-400 hover:text-white hover:bg-rose-500/15"
                                   }`}
                                   title={`Click to view and zoom to ${cName}`}
                                 >
-                                  <span className="truncate">{cName}</span>
+                                  <span className="truncate text-zinc-200 group-hover:text-white font-medium">
+                                    {cName}
+                                  </span>
                                   <span
                                     className={`text-[9px] font-mono shrink-0 ml-1.5 ${
-                                      isCSelected ? "text-rose-300 font-bold" : "text-muted-foreground"
+                                      isCSelected
+                                        ? "text-rose-300 font-bold"
+                                        : "text-zinc-400 group-hover:text-zinc-200"
                                     }`}
                                   >
                                     {cCode}
@@ -297,8 +303,7 @@ export default function Sidebar({
                             })}
                           </div>
                         ) : (
-
-                          <p className="text-[11px] text-muted-foreground italic py-1">
+                          <p className="text-[11px] text-zinc-400 italic py-1">
                             No constituency data loaded
                           </p>
                         )

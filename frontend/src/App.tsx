@@ -92,7 +92,7 @@ function App() {
     <Router>
       <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#0D0E15] text-[#F4F5F6] font-sans">
         <NavigationHeader />
-        <div className="flex-1 overflow-hidden relative">
+        <div className="flex-1 min-h-0 h-full relative overflow-hidden">
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/docs" element={<ApiDocs />} />

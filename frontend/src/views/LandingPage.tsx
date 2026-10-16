@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Terminal,
@@ -7,6 +7,7 @@ import {
   Code2,
   Copy,
   Check,
+  ArrowUp,
 } from "lucide-react";
 
 
@@ -14,11 +15,48 @@ export default function LandingPage() {
   const [activeSlice, setActiveSlice] = useState<number>(0);
   const [activeMatrixTab, setActiveMatrixTab] = useState<"clean_arch" | "postgis" | "redis">("clean_arch");
   const [curlCopied, setCurlCopied] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const copyQuickCurl = () => {
     navigator.clipboard.writeText("curl -s https://api.kenyaboundaries.com/api/v1/counties | jq .");
     setCurlCopied(true);
     setTimeout(() => setCurlCopied(false), 2000);
+  };
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    setShowScrollTop(e.currentTarget.scrollTop > 350);
+  };
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    const checkScroll = () => {
+      const depth = container ? container.scrollTop : window.scrollY;
+      setShowScrollTop(depth > 350);
+    };
+
+    if (container) {
+      container.addEventListener("scroll", checkScroll, { passive: true });
+    }
+    window.addEventListener("scroll", checkScroll, { passive: true });
+
+    return () => {
+      if (container) container.removeEventListener("scroll", checkScroll);
+      window.removeEventListener("scroll", checkScroll);
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const slices = [
@@ -57,7 +95,11 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-full w-full bg-[#0D0E15] text-[#F4F5F6] overflow-y-auto bg-nexus-grid relative">
+    <div
+      ref={scrollContainerRef}
+      onScroll={handleScroll}
+      className="h-full w-full bg-[#0D0E15] text-[#F4F5F6] overflow-y-auto overflow-x-hidden bg-nexus-grid relative scroll-smooth overscroll-y-contain"
+    >
       {/* Ambient Volt Glow at top */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[450px] bg-volt-radial pointer-events-none" />
 
@@ -390,6 +432,26 @@ MISS:  Falls back to PostgreSQL with pgxpool`}
           </div>
         </div>
       </footer>
+
+      {/* Upward Arrow (Toggle to Top) Button - Appears past 350px scroll depth */}
+      <button
+        type="button"
+        onClick={scrollToTop}
+        aria-label="Scroll to top"
+        title="Toggle upward to top"
+        className={`fixed bottom-8 right-8 z-50 flex items-center justify-center p-3 rounded-xl bg-[#141724]/90 backdrop-blur-md border border-[#D1FF00]/40 text-[#D1FF00] shadow-[0_0_20px_rgba(209,255,0,0.25)] hover:shadow-[0_0_30px_rgba(209,255,0,0.5)] hover:border-[#D1FF00] hover:bg-[#1E2336] transition-all duration-300 group cursor-pointer ${
+          showScrollTop
+            ? "opacity-100 translate-y-0 scale-100 pointer-events-auto"
+            : "opacity-0 translate-y-6 scale-90 pointer-events-none"
+        }`}
+      >
+        <div className="flex flex-col items-center">
+          <ArrowUp className="h-5 w-5 text-[#D1FF00] group-hover:-translate-y-1 transition-transform duration-200" />
+          <span className="text-[9px] font-mono font-bold tracking-widest text-[#D1FF00] uppercase mt-0.5">
+            TOP
+          </span>
+        </div>
+      </button>
     </div>
   );
 }
