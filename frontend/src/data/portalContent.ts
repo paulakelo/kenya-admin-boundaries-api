@@ -133,6 +133,7 @@ export const FOOTER_CONTENT = {
   brand: "KENYA ADMIN BOUNDARIES API",
   type: "OPEN SOURCE GEOSPATIAL PLATFORM",
   coordinateSystem: "WGS 84 (EPSG:4326)",
+  sourcesCitation: "Data Sources: KNBS (2019) • IEBC (2012/2022) • UN OCHA (2020/2022) • Survey of Kenya",
   githubUrl: "https://github.com/paulakelo/kenya-admin-boundaries-api",
   links: [
     { label: "API Reference", path: "/docs" },

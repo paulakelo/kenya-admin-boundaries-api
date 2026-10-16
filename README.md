@@ -142,18 +142,18 @@ npx markdownlint-cli README.md CHECKLIST.md
 
 ## Data Sources & Attributions
 
-The spatial geometries, administrative hierarchies, and electoral boundaries utilized in this project are sourced and cross-referenced from official government and humanitarian open datasets:
+The spatial geometries, administrative hierarchies, and electoral boundaries utilized in this project are sourced and cross-referenced from official government and humanitarian open datasets with explicit publication and census years:
 
-1. **Independent Electoral and Boundaries Commission (IEBC):**
-   * Official boundary data for Kenya's 290 parliamentary constituencies and 1,450 county assembly wards, delineated under the Constitution of Kenya (2010).
-2. **Kenya National Bureau of Statistics (KNBS):**
-   * National administrative hierarchy codes and naming standards established in the 2019 Kenya Population and Housing Census (47 Counties and 412 Sub-Counties).
-3. **United Nations Office for the Coordination of Humanitarian Affairs (UN OCHA) / Humanitarian Data Exchange (HDX):**
-   * Standardized administrative boundaries (COD-AB) for Kenya (Levels 0–3), projected in the World Geodetic System 1984 (WGS 84 / EPSG:4326).
-4. **Survey of Kenya (SoK) / Ministry of Lands and Physical Planning:**
-   * Authoritative national geodetic framework and national boundary surveying guidelines.
-5. **Esri & OpenStreetMap Contributors:**
-   * World Dark Canvas, OpenStreetMap, and World Satellite imagery basemap tile services provided for cartographic visualization in the Interactive Map Explorer.
+1. **Kenya National Bureau of Statistics (KNBS) [2019]:**
+   * *2019 Kenya Population and Housing Census (KPHC Volume 1: Administrative Units)*, published November 2019. Established official codes and boundaries for Kenya's 47 Counties and 412 Sub-Counties.
+2. **Independent Electoral and Boundaries Commission (IEBC) [2012 / 2022]:**
+   * *National Delimitation of Constituencies and Wards*, originally gazetted in 2012 (Gazette Vol. CXIV—No. 18) under the Constitution of Kenya (2010), and verified for the 2017 & 2022 General Elections. Delineates Kenya's 290 parliamentary constituencies and 1,450 county assembly wards.
+3. **United Nations Office for the Coordination of Humanitarian Affairs (UN OCHA) / HDX [2020 / 2022]:**
+   * *Kenya Common Operational Datasets on Administrative Boundaries (COD-AB)*, published in 2020 and updated in 2022. Provides standardized administrative polygons (Admin Levels 0–3) projected in WGS 84 (EPSG:4326).
+4. **Survey of Kenya (SoK) / Ministry of Lands and Physical Planning [2013 / 2019]:**
+   * *National Topographical and Cadastral Survey Guidelines & Devolution Gazettement (2013)*, harmonized with the 2019 administrative census adjustments.
+5. **Esri & OpenStreetMap Contributors [2024–2026]:**
+   * World Dark Canvas, OpenStreetMap, and World Satellite imagery basemap tile services (accessed 2024–2026) provided for cartographic visualization in the Interactive Map Explorer.
 
 ---
 
