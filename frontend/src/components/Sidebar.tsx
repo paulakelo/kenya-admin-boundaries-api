@@ -7,8 +7,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Search, MapPin, Layers, Building2, ChevronRight, Loader2 } from "lucide-react";
+import { Search, MapPin, Loader2 } from "lucide-react";
+
 
 const API_BASE = "http://localhost:18080/api/v1";
 
