@@ -16,13 +16,13 @@ export const CtaSection: React.FC = () => {
         <div className="flex items-center gap-3 shrink-0">
           <Link
             to="/docs"
-            className="px-5 py-2.5 rounded-md bg-accent text-accent-contrast font-bold text-xs uppercase tracking-wider hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+            className="px-5 py-2.5 rounded-md bg-accent text-black font-bold text-xs uppercase tracking-wider hover:bg-lime-300 active:scale-95 transition-all shadow-md shadow-accent/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
           >
             Launch API Console
           </Link>
           <Link
             to="/map"
-            className="px-5 py-2.5 rounded-md bg-surface-base hover:bg-surface-overlay text-text-heading font-semibold text-xs uppercase tracking-wider border border-border-subtle hover:border-border-strong transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+            className="px-5 py-2.5 rounded-md bg-surface-base hover:bg-surface-overlay text-text-heading font-bold text-xs uppercase tracking-wider border border-border-strong hover:border-accent/60 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
           >
             Open Map Explorer
           </Link>

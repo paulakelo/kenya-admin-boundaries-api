@@ -35,16 +35,16 @@ export const HeroSection: React.FC = () => {
       <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
         <Link
           to={HERO_CONTENT.primaryCta.path}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-accent text-accent-contrast font-semibold text-xs uppercase tracking-wider hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-accent text-black font-bold text-xs uppercase tracking-wider hover:bg-lime-300 active:scale-95 transition-all shadow-md shadow-accent/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
         >
-          <Code2 className="h-4 w-4" aria-hidden="true" />
+          <Code2 className="h-4 w-4 text-black" aria-hidden="true" />
           <span>{HERO_CONTENT.primaryCta.label}</span>
-          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          <ArrowRight className="h-4 w-4 text-black" aria-hidden="true" />
         </Link>
 
         <Link
           to={HERO_CONTENT.secondaryCta.path}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-surface-raised border border-border-subtle text-text-heading font-semibold text-xs uppercase tracking-wider hover:border-accent/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-surface-raised border border-border-strong text-text-heading font-bold text-xs uppercase tracking-wider hover:bg-surface-overlay hover:border-accent/60 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface-base"
         >
           <MapPin className="h-4 w-4 text-accent" aria-hidden="true" />
           <span>{HERO_CONTENT.secondaryCta.label}</span>
@@ -52,7 +52,7 @@ export const HeroSection: React.FC = () => {
       </div>
 
       {/* Quickstart Command Bar */}
-      <div className="mt-8 w-full max-w-xl flex items-center justify-between p-2 rounded-lg bg-surface-raised border border-border-subtle font-mono text-xs">
+      <div className="mt-8 w-full max-w-xl flex items-center justify-between p-2 rounded-lg bg-surface-sunken border border-border-strong font-mono text-xs shadow-xs">
         <div className="flex items-center gap-2 text-text-body truncate pl-2">
           <span className="text-accent select-none" aria-hidden="true">$</span>
           <span className="truncate">{HERO_CONTENT.quickCurl}</span>

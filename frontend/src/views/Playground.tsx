@@ -95,16 +95,16 @@ export default function Playground() {
             type="button"
             onClick={() => setIsSidebarOpen((prev) => !prev)}
             aria-expanded={isSidebarOpen}
-            className="p-2 rounded-md bg-surface-raised border border-border-subtle text-text-heading hover:bg-surface-overlay transition-colors shadow-sm text-xs flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="p-2 rounded-md bg-surface-raised border border-border-strong text-text-heading hover:bg-surface-overlay transition-colors shadow-md text-xs flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             title={isSidebarOpen ? "Collapse explorer sidebar" : "Expand explorer sidebar"}
           >
             <Layers className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
-            <span className="font-semibold">{isSidebarOpen ? "Hide Explorer" : "Show Explorer"}</span>
+            <span className="font-bold">{isSidebarOpen ? "Hide Explorer" : "Show Explorer"}</span>
           </button>
 
           <Link
             to="/"
-            className="p-2 rounded-md bg-surface-raised border border-border-subtle text-text-heading hover:bg-surface-overlay transition-colors shadow-sm text-xs flex items-center gap-1 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="p-2 rounded-md bg-surface-raised border border-border-strong text-text-heading hover:bg-surface-overlay transition-colors shadow-md text-xs flex items-center gap-1 font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             title="Return to Portal Overview"
           >
             <ArrowLeft className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
@@ -113,7 +113,7 @@ export default function Playground() {
 
           <Link
             to="/docs"
-            className="p-2 rounded-md bg-surface-raised border border-border-subtle text-text-heading hover:bg-surface-overlay transition-colors shadow-sm text-xs flex items-center gap-1 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="p-2 rounded-md bg-surface-raised border border-border-strong text-text-heading hover:bg-surface-overlay transition-colors shadow-md text-xs flex items-center gap-1 font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             title="Open API Reference"
           >
             <BookOpen className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
@@ -125,7 +125,7 @@ export default function Playground() {
         {selectedCode && (
           <aside
             aria-label="Selected Boundary Details"
-            className="absolute bottom-6 left-6 z-[1000] bg-surface-raised border border-border-subtle rounded-lg p-4 shadow-xl max-w-xs animate-in fade-in"
+            className="absolute bottom-6 left-6 z-[1000] bg-surface-raised border border-border-strong rounded-lg p-4 shadow-2xl max-w-xs animate-in fade-in"
           >
             <div className="flex items-start justify-between gap-3">
               <div>

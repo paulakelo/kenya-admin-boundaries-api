@@ -12,31 +12,32 @@ html, body, #root {
 }
 
 :root {
-  /* Foundational Surface Tokens (WCAG-compliant off-black neutral palette) */
-  --surface-base: #121316;
-  --surface-raised: #18191E;
-  --surface-overlay: #21232B;
-  --surface-sunken: #0C0D0F;
+  /* Foundational Surface Tokens - distinct stepped lightness for clear component hierarchy */
+  --surface-sunken: #0A0B0E;
+  --surface-base: #111216;
+  --surface-raised: #181920;
+  --surface-overlay: #22242F;
+  --surface-highlight: #2C2F3D;
 
   /* Text & Content Tokens (WCAG 2.1 AA Compliant, 0 astigmatism halation) */
   --text-heading: #F4F4F6;
   --text-body: #D1D1DB;
   --text-muted: #8E8E9C;
 
-  /* Structural Border Tokens */
-  --border-subtle: #24262E;
-  --border-strong: #363844;
+  /* Structural Border Tokens - clearly demarcated component boundaries */
+  --border-subtle: #282B37;
+  --border-strong: #3D4255;
 
-  /* Semantic Accent Tokens (Refined developer lime) */
+  /* Semantic Accent Tokens (Refined developer lime with true black contrast) */
   --accent: #C4F82A;
-  --accent-contrast: #0C0D0F;
+  --accent-contrast: #000000;
 
   /* shadcn/ui bridge tokens */
   --background: var(--surface-base);
   --foreground: var(--text-heading);
   --card: var(--surface-raised);
   --card-foreground: var(--text-heading);
-  --popover: var(--surface-raised);
+  --popover: var(--surface-overlay);
   --popover-foreground: var(--text-heading);
   --primary: var(--accent);
   --primary-foreground: var(--accent-contrast);
@@ -56,7 +57,7 @@ html, body, #root {
   --foreground: var(--text-heading);
   --card: var(--surface-raised);
   --card-foreground: var(--text-heading);
-  --popover: var(--surface-raised);
+  --popover: var(--surface-overlay);
   --popover-foreground: var(--text-heading);
   --primary: var(--accent);
   --primary-foreground: var(--accent-contrast);
@@ -74,10 +75,11 @@ html, body, #root {
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   
+  --color-surface-sunken: var(--surface-sunken);
   --color-surface-base: var(--surface-base);
   --color-surface-raised: var(--surface-raised);
   --color-surface-overlay: var(--surface-overlay);
-  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-highlight: var(--surface-highlight);
 
   --color-text-heading: var(--text-heading);
   --color-text-body: var(--text-body);
@@ -85,6 +87,9 @@ html, body, #root {
 
   --color-border-subtle: var(--border-subtle);
   --color-border-strong: var(--border-strong);
+
+  --color-accent: var(--accent);
+  --color-accent-contrast: var(--accent-contrast);
 
   --color-border: var(--border);
   --color-input: var(--input);
@@ -98,7 +103,6 @@ html, body, #root {
   --color-destructive: var(--destructive);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 }

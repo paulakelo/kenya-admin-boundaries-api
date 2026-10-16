@@ -128,16 +128,16 @@ export default function Sidebar({
   }, [counties, searchQuery]);
 
   return (
-    <div className="h-full flex flex-col bg-card border-r border-border select-none">
+    <div className="h-full flex flex-col bg-surface-sunken border-r border-border-strong select-none">
       {/* Header Info */}
-      <div className="p-4 border-b border-border bg-card/50">
+      <div className="p-4 border-b border-border-strong bg-surface-base">
         <div className="flex items-center gap-2 mb-1.5">
           <span className="text-xl">🇰🇪</span>
           <div>
-            <h2 className="text-sm font-semibold tracking-tight text-foreground">
+            <h2 className="text-sm font-bold tracking-tight text-text-heading">
               Kenya Admin Explorer
             </h2>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-[11px] text-text-muted">
               47 Counties • 290 Constituencies • 412 Sub-Counties
             </p>
           </div>
@@ -155,27 +155,27 @@ export default function Sidebar({
             placeholder="Search county (e.g. Nairobi, KE047)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 text-xs rounded-md bg-surface-base border border-border-subtle focus:outline-none focus:ring-1 focus:ring-accent text-text-heading placeholder:text-text-muted transition-all"
+            className="w-full pl-8 pr-3 py-2 text-xs rounded-md bg-surface-sunken border border-border-strong focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent text-text-heading placeholder:text-text-muted/50 transition-colors"
           />
         </div>
       </div>
 
       {/* Counties List Header & count */}
-      <div className="px-4 py-2 border-b border-border-subtle bg-surface-base flex items-center justify-between text-xs text-text-muted font-medium">
+      <div className="px-4 py-2.5 border-b border-border-strong bg-surface-base flex items-center justify-between text-xs text-text-heading font-semibold">
         <span>COUNTIES ({filteredCounties.length})</span>
-        <span className="text-[10px] bg-accent/10 text-accent font-semibold px-1.5 py-0.5 rounded border border-accent/20">
+        <span className="text-[10px] bg-accent/15 text-accent font-semibold px-2 py-0.5 rounded border border-accent/30">
           PostGIS Indexed
         </span>
       </div>
 
       {/* County List */}
-      <div className="flex-1 overflow-y-auto px-2 py-1">
+      <div className="flex-1 overflow-y-auto px-2 py-2 space-y-1">
         {filteredCounties.length === 0 ? (
-          <div className="p-6 text-center text-xs text-muted-foreground">
+          <div className="p-6 text-center text-xs text-text-muted">
             No counties match &ldquo;{searchQuery}&rdquo;
           </div>
         ) : (
-          <Accordion className="space-y-1">
+          <Accordion className="space-y-1.5">
             {filteredCounties.map((county) => {
               const code = county.properties.code;
               const name = county.properties.name;
@@ -186,8 +186,10 @@ export default function Sidebar({
               return (
                 <AccordionItem
                   key={code}
-                  className={`border border-border/40 rounded-lg overflow-hidden transition-all ${
-                    isSelected ? "bg-accent/40 border-primary/50 shadow-sm" : "hover:bg-accent/20"
+                  className={`border rounded-lg overflow-hidden transition-all ${
+                    isSelected
+                      ? "bg-surface-overlay border-border-strong border-l-2 border-l-accent shadow-xs"
+                      : "border-border-subtle bg-surface-base hover:bg-surface-raised"
                   }`}
                 >
                   <AccordionTrigger
@@ -198,31 +200,31 @@ export default function Sidebar({
                       <div className="flex items-center gap-2">
                         <MapPin
                           className={`h-3.5 w-3.5 ${
-                            isSelected ? "text-primary" : "text-muted-foreground"
+                            isSelected ? "text-accent" : "text-text-muted"
                           }`}
                         />
-                        <span className={isSelected ? "font-semibold text-primary" : ""}>
+                        <span className={isSelected ? "font-bold text-text-heading" : "text-text-body"}>
                           {name}
                         </span>
                       </div>
-                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-mono">
+                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-mono bg-surface-sunken text-text-muted border border-border-subtle">
                         {code}
                       </Badge>
                     </div>
                   </AccordionTrigger>
 
-                  <AccordionContent className="px-3 pb-3 pt-1 border-t border-border/30 bg-background/50">
+                  <AccordionContent className="px-3 pb-3 pt-1 border-t border-border-subtle bg-surface-sunken">
                     <div className="space-y-2.5">
                       {/* Sub-view toggle (Sub-Counties vs Constituencies) */}
                       <div className="flex items-center justify-between pt-1">
-                        <div className="flex gap-1 bg-[#141724] p-1 rounded-md text-[10px] border border-white/10 w-full">
+                        <div className="flex gap-1 bg-surface-base p-1 rounded-md text-[10px] border border-border-strong w-full">
                           <button
                             type="button"
                             onClick={() => setViewDetail("subcounties")}
-                            className={`flex-1 py-1 rounded font-medium transition-all text-center ${
+                            className={`flex-1 py-1 rounded font-medium transition-all text-center cursor-pointer ${
                               viewDetail === "subcounties"
-                                ? "bg-[#D1FF00] text-[#0D0E15] font-bold shadow-xs"
-                                : "text-zinc-400 hover:text-white hover:bg-white/5"
+                                ? "bg-accent text-black font-bold shadow-xs"
+                                : "text-text-muted hover:text-text-heading hover:bg-surface-overlay"
                             }`}
                           >
                             Sub-Counties ({subCountiesList ? subCountiesList.length : "…"})
@@ -230,10 +232,10 @@ export default function Sidebar({
                           <button
                             type="button"
                             onClick={() => setViewDetail("constituencies")}
-                            className={`flex-1 py-1 rounded font-medium transition-all text-center ${
+                            className={`flex-1 py-1 rounded font-medium transition-all text-center cursor-pointer ${
                               viewDetail === "constituencies"
                                 ? "bg-rose-500 text-white font-bold shadow-xs"
-                                : "text-zinc-400 hover:text-white hover:bg-white/5"
+                                : "text-text-muted hover:text-text-heading hover:bg-surface-overlay"
                             }`}
                           >
                             Constituencies ({constituencyList ? constituencyList.length : "…"})
@@ -243,8 +245,8 @@ export default function Sidebar({
 
                       {/* Content Section */}
                       {loadingCode === code ? (
-                        <div className="flex items-center gap-2 py-3 text-xs text-zinc-400 justify-center">
-                          <Loader2 className="h-3.5 w-3.5 animate-spin text-[#D1FF00]" />
+                        <div className="flex items-center gap-2 py-3 text-xs text-text-muted justify-center">
+                          <Loader2 className="h-3.5 w-3.5 animate-spin text-accent" />
                           <span>Loading hierarchy from API...</span>
                         </div>
                       ) : viewDetail === "subcounties" ? (
@@ -253,17 +255,17 @@ export default function Sidebar({
                             {subCountiesList.map((sc) => (
                               <div
                                 key={sc.sub_county_code}
-                                className="text-[11px] text-zinc-200 pl-2.5 pr-2 py-1.5 border-l-2 border-[#D1FF00]/50 hover:border-[#D1FF00] hover:text-white hover:bg-[#D1FF00]/10 transition-colors flex items-center justify-between rounded-r bg-[#161926]"
+                                className="text-[11px] text-text-body pl-2.5 pr-2 py-1.5 border-l-2 border-accent/60 hover:border-accent hover:text-text-heading hover:bg-accent/10 transition-colors flex items-center justify-between rounded-r bg-surface-base border border-border-subtle"
                               >
                                 <span className="font-medium truncate">{sc.sub_county_name}</span>
-                                <span className="text-[9px] font-mono text-zinc-400 shrink-0 ml-1.5">
+                                <span className="text-[9px] font-mono text-text-muted shrink-0 ml-1.5">
                                   {sc.sub_county_code}
                                 </span>
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <p className="text-[11px] text-zinc-400 italic py-1">
+                          <p className="text-[11px] text-text-muted italic py-1">
                             Click to query sub-counties
                           </p>
                         )
@@ -286,18 +288,18 @@ export default function Sidebar({
                                   className={`w-full text-left text-[11px] pl-2.5 pr-2 py-1.5 border-l-2 transition-all flex items-center justify-between rounded-r group cursor-pointer ${
                                     isCSelected
                                       ? "border-rose-400 bg-rose-500/25 text-white font-semibold shadow-xs"
-                                      : "border-rose-500/50 bg-[#161926] text-zinc-200 hover:border-rose-400 hover:text-white hover:bg-rose-500/15"
+                                      : "border-rose-500/50 bg-surface-base text-text-body hover:border-rose-400 hover:text-white hover:bg-rose-500/15"
                                   }`}
                                   title={`Click to view and zoom to ${cName}`}
                                 >
-                                  <span className="truncate text-zinc-200 group-hover:text-white font-medium">
+                                  <span className="truncate text-text-body group-hover:text-text-heading font-medium">
                                     {cName}
                                   </span>
                                   <span
                                     className={`text-[9px] font-mono shrink-0 ml-1.5 ${
                                       isCSelected
                                         ? "text-rose-300 font-bold"
-                                        : "text-zinc-400 group-hover:text-zinc-200"
+                                        : "text-text-muted group-hover:text-text-body"
                                     }`}
                                   >
                                     {cCode}
@@ -307,7 +309,7 @@ export default function Sidebar({
                             })}
                           </div>
                         ) : (
-                          <p className="text-[11px] text-zinc-400 italic py-1">
+                          <p className="text-[11px] text-text-muted italic py-1">
                             No constituency data loaded
                           </p>
                         )

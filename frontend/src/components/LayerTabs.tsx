@@ -24,24 +24,25 @@ export default function LayerTabs({
         value={activeLayer}
         onValueChange={(v) => onLayerChange(v as LayerType)}
       >
-        <TabsList className="bg-card/90 backdrop-blur-md border border-border shadow-lg p-0.5 h-8">
-          <TabsTrigger value="counties" className="text-xs font-semibold px-3 py-1">
+        <TabsList className="bg-surface-raised border border-border-strong shadow-md p-0.5 h-8">
+          <TabsTrigger value="counties" className="text-xs font-bold px-3 py-1 cursor-pointer data-[state=active]:bg-surface-overlay data-[state=active]:text-text-heading data-[state=active]:shadow-xs">
             Counties (47)
           </TabsTrigger>
-          <TabsTrigger value="constituencies" className="text-xs font-semibold px-3 py-1">
+          <TabsTrigger value="constituencies" className="text-xs font-bold px-3 py-1 cursor-pointer data-[state=active]:bg-surface-overlay data-[state=active]:text-text-heading data-[state=active]:shadow-xs">
             Constituencies (290)
           </TabsTrigger>
         </TabsList>
       </Tabs>
 
       {/* Basemap Switcher */}
-      <div className="bg-card/90 backdrop-blur-md border border-border rounded-lg shadow-lg flex items-center p-0.5 h-8 text-[11px]">
+      <div className="bg-surface-raised border border-border-strong rounded-lg shadow-md flex items-center p-0.5 h-8 text-[11px]">
         <button
+          type="button"
           onClick={() => onBasemapChange("dark")}
-          className={`px-2 py-1 rounded font-medium transition-all flex items-center gap-1 ${
+          className={`px-2 py-1 rounded font-bold transition-all flex items-center gap-1 cursor-pointer ${
             basemap === "dark"
-              ? "bg-primary text-primary-foreground shadow-xs"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-accent text-black shadow-xs"
+              : "text-text-muted hover:text-text-heading hover:bg-surface-overlay"
           }`}
           title="Esri World Dark Gray (No watermarks)"
         >
@@ -49,11 +50,12 @@ export default function LayerTabs({
           <span>Dark</span>
         </button>
         <button
+          type="button"
           onClick={() => onBasemapChange("osm")}
-          className={`px-2 py-1 rounded font-medium transition-all flex items-center gap-1 ${
+          className={`px-2 py-1 rounded font-bold transition-all flex items-center gap-1 cursor-pointer ${
             basemap === "osm"
-              ? "bg-primary text-primary-foreground shadow-xs"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-accent text-black shadow-xs"
+              : "text-text-muted hover:text-text-heading hover:bg-surface-overlay"
           }`}
           title="OpenStreetMap Standard"
         >
@@ -61,11 +63,12 @@ export default function LayerTabs({
           <span>OSM</span>
         </button>
         <button
+          type="button"
           onClick={() => onBasemapChange("satellite")}
-          className={`px-2 py-1 rounded font-medium transition-all flex items-center gap-1 ${
+          className={`px-2 py-1 rounded font-bold transition-all flex items-center gap-1 cursor-pointer ${
             basemap === "satellite"
-              ? "bg-primary text-primary-foreground shadow-xs"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-accent text-black shadow-xs"
+              : "text-text-muted hover:text-text-heading hover:bg-surface-overlay"
           }`}
           title="Esri Satellite Imagery"
         >
