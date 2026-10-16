@@ -217,51 +217,90 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right Column: Dynamic Matrix Showcase Banner */}
-          <div className="lg:col-span-7 rounded-xl overflow-hidden border border-white/10 relative bg-[#141724] min-h-[380px] flex flex-col justify-between p-8">
-            <div className="absolute inset-0 bg-nexus-grid opacity-30 pointer-events-none" />
-            <div className="absolute top-0 right-0 w-72 h-72 bg-[#D1FF00]/5 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="relative z-10 flex items-center justify-between">
-              <span className="font-mono text-xs text-[#D1FF00] font-bold">
-                FIG. {activeMatrixTab.toUpperCase()}
-              </span>
-              <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-mono text-[10px] border border-emerald-500/20">
-                ● PROD_READY
-              </span>
-            </div>
-
-            <div className="relative z-10 my-8">
-              <div className="font-mono text-xs text-[#D1FF00] mb-2 uppercase tracking-widest">
-                API Standard / JSON & GeoJSON
+          {/* Right Column: Dynamic Terminal Showcase */}
+          <div className="lg:col-span-7 rounded-xl overflow-hidden border border-white/10 bg-[#0A0B10] shadow-2xl flex flex-col justify-between">
+            {/* Terminal Top Window Bar */}
+            <div className="px-5 py-3 border-b border-white/10 bg-[#12141D] flex items-center justify-between font-mono">
+              <div className="flex items-center gap-2">
+                <span className="h-3 w-3 rounded-full bg-[#FF5F56]/80 inline-block" />
+                <span className="h-3 w-3 rounded-full bg-[#FFBD2E]/80 inline-block" />
+                <span className="h-3 w-3 rounded-full bg-[#27C93F]/80 inline-block" />
+                <span className="ml-2 text-xs text-[#8B94A5]">
+                  {activeMatrixTab === "clean_arch" && "bash: ~/kenya-api/routes.sh"}
+                  {activeMatrixTab === "postgis" && "psql: spatial_pg (postgis 3.3)"}
+                  {activeMatrixTab === "redis" && "redis-cli: spatial_redis (in-memory)"}
+                </span>
               </div>
-              <pre className="p-4 rounded-lg bg-black/80 border border-white/10 font-mono text-xs text-zinc-300 overflow-x-auto leading-relaxed">
-{activeMatrixTab === "clean_arch" && `// Standard REST API Route Definition
-GET /api/v1/counties
-GET /api/v1/counties/:slug
-GET /api/v1/counties/:slug/hierarchy
-GET /api/v1/counties/:slug/constituencies
-GET /api/v1/constituencies
-GET /api/v1/sub-counties
-GET /api/v1/wards`}
-
-{activeMatrixTab === "postgis" && `SELECT 
-  county_code,
-  county_name,
-  ST_AsGeoJSON(geom)::json AS geometry
-FROM counties
-WHERE ST_Intersects(geom, ST_MakeEnvelope(34.0, -4.5, 42.0, 5.0, 4326));`}
-
-{activeMatrixTab === "redis" && `// Redis 7 Fast Cache Lookup
-KEY:   geo:county:KE047:geojson
-TTL:   86400s (24 Hours)
-HIT:   0.8ms average response time
-MISS:  Falls back to PostgreSQL with pgxpool`}
-              </pre>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-[#D1FF00] font-bold">
+                  FIG. {activeMatrixTab.toUpperCase()}
+                </span>
+                <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] border border-emerald-500/20">
+                  ● ACTIVE
+                </span>
+              </div>
             </div>
 
-            <div className="relative z-10 flex items-center justify-between text-xs text-[#8B94A5] font-mono border-t border-white/10 pt-4">
-              <span>WGS 84 (EPSG:4326)</span>
+            {/* Terminal Body */}
+            <div className="p-6 font-mono text-xs overflow-x-auto leading-relaxed flex-1 bg-[#0A0B10]">
+              {activeMatrixTab === "clean_arch" && (
+                <div className="space-y-3">
+                  <div className="text-zinc-500">// REST API Core Route Registry &amp; GeoJSON Output</div>
+                  <div className="space-y-1.5 pt-1">
+                    {[
+                      { method: "GET", path: "/api/v1/counties", res: "GeoJSON FeatureCollection (47)" },
+                      { method: "GET", path: "/api/v1/counties/:slug", res: "GeoJSON Feature (Single Polygon)" },
+                      { method: "GET", path: "/api/v1/counties/:slug/hierarchy", res: "JSON { county, constituencies }" },
+                      { method: "GET", path: "/api/v1/counties/:slug/constituencies", res: "GeoJSON FeatureCollection" },
+                      { method: "GET", path: "/api/v1/constituencies", res: "GeoJSON FeatureCollection (290)" },
+                      { method: "GET", path: "/api/v1/sub-counties", res: "JSON Array (412 Units)" },
+                      { method: "GET", path: "/api/v1/wards", res: "JSON Array (1,450 Wards)" },
+                    ].map((route, i) => (
+                      <div key={i} className="flex items-center gap-3 text-xs py-1 hover:bg-white/5 px-2 rounded transition-colors">
+                        <span className="text-[#D1FF00] font-bold w-10 shrink-0">{route.method}</span>
+                        <span className="text-white font-medium flex-1 truncate">{route.path}</span>
+                        <span className="text-[#8B94A5] text-[11px] shrink-0 font-sans">{route.res}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeMatrixTab === "postgis" && (
+                <div className="space-y-3">
+                  <div className="text-zinc-500">-- High-Performance 2D GIST Spatial Intersection Query</div>
+                  <pre className="text-zinc-300">
+                    <span className="text-[#D1FF00]">SELECT</span> county_code, county_name,{"\n"}
+                    {"  "}<span className="text-cyan-400">ST_AsGeoJSON</span>(geom)::json <span className="text-[#D1FF00]">AS</span> geometry{"\n"}
+                    <span className="text-[#D1FF00]">FROM</span> counties{"\n"}
+                    <span className="text-[#D1FF00]">WHERE</span> <span className="text-cyan-400">ST_Intersects</span>(geom, <span className="text-cyan-400">ST_MakeEnvelope</span>(34.0, -4.5, 42.0, 5.0, 4326));
+                  </pre>
+                  <div className="border-t border-white/10 pt-3 text-zinc-400 text-[11px] space-y-1">
+                    <div><span className="text-emerald-400 font-bold">Index Scan:</span> idx_counties_geom_gist on counties (cost=0.14..8.25)</div>
+                    <div><span className="text-emerald-400 font-bold">Execution Time:</span> <span className="text-[#D1FF00] font-bold">0.428 ms</span> (sub-millisecond spatial lookup)</div>
+                  </div>
+                </div>
+              )}
+
+              {activeMatrixTab === "redis" && (
+                <div className="space-y-2.5">
+                  <div className="text-zinc-500"># Redis 7 In-Memory Multi-Tier Spatial Cache</div>
+                  <div className="text-zinc-300 font-bold">$ redis-cli -p 6379</div>
+                  <div className="pl-2 space-y-1.5 text-zinc-300">
+                    <div>127.0.0.1:6379&gt; GET geo:county:KE047:geojson</div>
+                    <div className="text-emerald-400 pl-4 font-semibold">-&gt; [CACHE HIT] 48,210 bytes in-memory buffer</div>
+                    <div>127.0.0.1:6379&gt; TTL geo:county:KE047:geojson</div>
+                    <div className="text-cyan-400 pl-4 font-semibold">-&gt; (integer) 84312 [23h 25m remaining]</div>
+                    <div>127.0.0.1:6379&gt; LATENCY latest</div>
+                    <div className="text-[#D1FF00] pl-4 font-semibold">-&gt; &quot;geo:county:*&quot; 0.82ms latency</div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Terminal Status Footer */}
+            <div className="px-5 py-3 border-t border-white/10 bg-[#12141D] flex items-center justify-between text-xs text-[#8B94A5] font-mono">
+              <span className="text-[11px]">WGS 84 (EPSG:4326) // PostGIS 3.3 GIST</span>
               <Link to="/docs" className="text-[#D1FF00] hover:underline flex items-center gap-1 font-semibold">
                 <span>View Full Schema Docs</span>
                 <ArrowRight className="h-3.5 w-3.5" />
