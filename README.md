@@ -15,13 +15,14 @@ This project provides high-performance spatial queries, caching, and a clean JSO
 
 ## Repository Structure
 
-The Go REST API is designed using strict separation of concerns:
-* `cmd/api/main.go` - The entry point and dependency injection wiring.
-* `internal/domain` - Core business models (e.g., County, SubCounty, Constituency).
+* `backend/cmd/api/main.go` - The entry point and dependency injection wiring.
+* `internal/domain` - Core business models (e.g., County, SubCounty, Constituency, Ward).
 * `internal/repository/postgres` - `sqlc`-generated database interactions.
 * `internal/service` - Business logic and caching interfaces.
 * `internal/handler` - HTTP delivery, request binding, and JSON responses.
+* `frontend/` - Modern React 19 + Vite Developer Portal with interactive map explorer and live API documentation console.
 * `migrations/` - Raw SQL definitions for the PostGIS tables.
+
 
 ## Getting Started
 
@@ -95,17 +96,21 @@ The Go REST API is designed using strict separation of concerns:
 
 ---
 
-## Interactive Map Playground
-
-While a custom frontend application isn't necessary for an API (and industry standard heavily favors generating docs directly or putting them in the `README`), this project includes a helpful interactive geospatial playground to instantly visualize the PostGIS spatial data on an actual map.
-
-To run the playground:
+## Interactive Map Explorer & API Developer Portal
+ 
+This project features a modern developer portal combining an interactive geospatial map explorer with live API documentation:
+ 
+* **Map Explorer (`/`):** Real-time spatial visualization of Kenya's 47 counties, 290 constituencies, and 412 sub-counties with multi-basemap support (Esri Dark Canvas, OpenStreetMap, Satellite).
+* **API Documentation & Console (`/docs`):** Complete interactive reference for all REST endpoints with live query execution, response inspection, and multi-language code snippets (cURL, JavaScript, Python, Go).
+ 
+To run the frontend developer portal:
 ```bash
-cd kenya-admin-ui
+cd frontend
 npm install
 npm run dev
 ```
-Navigate to `http://localhost:5173/map` to browse and interact with the polygon bounds.
+Navigate to `http://localhost:5173` to explore both the map and the interactive API console.
+
 
 ## Architecture Notes
 * **Clean Architecture:** The backend strictly isolates the domain logic from external frameworks, HTTP delivery, and database implementations.
