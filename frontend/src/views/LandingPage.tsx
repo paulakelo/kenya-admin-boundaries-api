@@ -12,7 +12,6 @@ import {
 
 
 export default function LandingPage() {
-  const [activeSlice, setActiveSlice] = useState<number>(0);
   const [activeMatrixTab, setActiveMatrixTab] = useState<"clean_arch" | "postgis" | "redis">("clean_arch");
   const [curlCopied, setCurlCopied] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -58,41 +57,6 @@ export default function LandingPage() {
       behavior: "smooth",
     });
   };
-
-  const slices = [
-    {
-      id: "A.01",
-      category: "Compute",
-      title: "Spatial Geometry Engine",
-      description:
-        "High-performance PostGIS 3.3 spatial intersections with dedicated GIST indexes. Delivers accurate WGS 84 (EPSG:4326) MultiPolygon GeoJSON.",
-      image: "/images/nexus-core.jpg",
-    },
-    {
-      id: "A.02",
-      category: "Thermal",
-      title: "In-Memory Caching Fabric",
-      description:
-        "Sub-millisecond Redis 7 caching layer with automatic 24-hour TTL, mitigating database load for frequently requested national boundaries.",
-      image: "/images/nexus-flux.jpg",
-    },
-    {
-      id: "A.03",
-      category: "Hierarchy",
-      title: "Administrative Matrix",
-      description:
-        "Strict relational hierarchy mapping all 47 Counties, 290 Parliamentary Constituencies, 412 Sub-Counties, and 1,450 Wards.",
-      image: "/images/nexus-grid.jpg",
-    },
-    {
-      id: "A.04",
-      category: "Delivery",
-      title: "Interactive Console",
-      description:
-        "Built-in live API tester and multi-language code snippet generator (cURL, JavaScript, Python, Go) with zero authentication barriers.",
-      image: "/images/nexus-sync.jpg",
-    },
-  ];
 
   return (
     <div
@@ -198,74 +162,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Kinetic System Slices (Nexus Card 3 Accordion Fold) */}
-      <section className="px-6 max-w-7xl mx-auto py-12 border-t border-white/5">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-          <div>
-            <span className="font-mono text-[11px] uppercase tracking-widest text-[#D1FF00]">
-              02 // System Architecture
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold mt-1 text-white">
-              Four Core Subsystems. One Unified Spine.
-            </h2>
-          </div>
-          <p className="text-xs font-mono text-[#8B94A5]">
-            Select any subsystem to inspect spatial capability
-          </p>
-        </div>
-
-        {/* Interactive Accordion Slices */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {slices.map((slice, index) => {
-            const isActive = activeSlice === index;
-            return (
-              <div
-                key={slice.id}
-                onClick={() => setActiveSlice(index)}
-                className={`group relative rounded-xl overflow-hidden border transition-all duration-300 cursor-pointer min-h-[300px] flex flex-col justify-between p-6 ${
-                  isActive
-                    ? "border-[#D1FF00] shadow-xl shadow-[#D1FF00]/10"
-                    : "border-white/10 hover:border-white/30"
-                }`}
-                style={{
-                  backgroundImage: `linear-gradient(to bottom, rgba(13,14,21,0.6), rgba(13,14,21,0.92)), url(${slice.image})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
-              >
-                {/* Header tag */}
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-[#D1FF00]">
-                    {slice.id}
-                  </span>
-                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-white/10 text-zinc-300">
-                    {slice.category}
-                  </span>
-                </div>
-
-                {/* Content */}
-                <div className="mt-auto pt-6">
-                  <h3 className="text-lg font-bold text-white group-hover:text-[#D1FF00] transition-colors">
-                    {slice.title}
-                  </h3>
-                  <p className="mt-2 text-xs text-[#8B94A5] leading-relaxed line-clamp-3">
-                    {slice.description}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Platform Matrix Tabs (Nexus Card 4 Matrix) */}
+      {/* Platform Matrix Tabs (Architecture & Specifications) */}
       <section className="px-6 max-w-7xl mx-auto py-16 border-t border-white/5">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Left Column: Interactive Selector */}
           <div className="lg:col-span-5 space-y-6">
             <div>
               <span className="font-mono text-[11px] uppercase tracking-widest text-[#D1FF00]">
-                03 // Technical Specifications
+                02 // Technical Specifications
               </span>
               <h2 className="text-2xl sm:text-3xl font-bold mt-1 text-white">
                 Engineered for High-Throughput Spatial Querying
@@ -315,20 +219,8 @@ export default function LandingPage() {
 
           {/* Right Column: Dynamic Matrix Showcase Banner */}
           <div className="lg:col-span-7 rounded-xl overflow-hidden border border-white/10 relative bg-[#141724] min-h-[380px] flex flex-col justify-between p-8">
-            <div
-              className="absolute inset-0 opacity-20 pointer-events-none"
-              style={{
-                backgroundImage: `url(${
-                  activeMatrixTab === "clean_arch"
-                    ? "/images/nexus-tab-core.jpg"
-                    : activeMatrixTab === "postgis"
-                    ? "/images/nexus-tab-fluidics.jpg"
-                    : "/images/nexus-tab-sync.jpg"
-                })`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            />
+            <div className="absolute inset-0 bg-nexus-grid opacity-30 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-72 h-72 bg-[#D1FF00]/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10 flex items-center justify-between">
               <span className="font-mono text-xs text-[#D1FF00] font-bold">
