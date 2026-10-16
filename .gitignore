@@ -7,6 +7,8 @@ desktop.ini
 .vscode/
 .idea/
 *.iml
+CHECKLIST.md
+
 
 # Ignore common Go build outputs and test binaries
 *.exe

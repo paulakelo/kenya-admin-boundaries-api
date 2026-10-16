@@ -14,7 +14,9 @@ interface KenyaMapProps {
     flyToCode: string | null;
     selectedCode: string | null;
     onFeatureSelect: (code: string, name: string) => void;
+    basemap?: "dark" | "osm" | "satellite";
 }
+
 
 function FlyToCounty({
     counties,
@@ -83,6 +85,24 @@ const CONSTITUENCY_HIGHLIGHT: PathOptions = {
     fillOpacity: 0.25,
 };
 
+const BASEMAP_TILES = {
+    dark: {
+        url: "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+        maxZoom: 16,
+    },
+    osm: {
+        url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+    },
+    satellite: {
+        url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
+        maxZoom: 18,
+    },
+};
+
 export default function KenyaMap({
     counties,
     constituencies,
@@ -90,9 +110,11 @@ export default function KenyaMap({
     flyToCode,
     selectedCode,
     onFeatureSelect,
+    basemap = "dark",
 }: KenyaMapProps) {
     const countyRef = useRef<LeafletGeoJSON | null>(null);
     const constituencyRef = useRef<LeafletGeoJSON | null>(null);
+
 
     // Update county styles when selectedCode or activeLayer changes
     useEffect(() => {
@@ -197,9 +219,12 @@ export default function KenyaMap({
             zoomControl={false}
         >
             <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                key={basemap}
+                attribution={BASEMAP_TILES[basemap]?.attribution || BASEMAP_TILES.dark.attribution}
+                url={BASEMAP_TILES[basemap]?.url || BASEMAP_TILES.dark.url}
+                maxZoom={BASEMAP_TILES[basemap]?.maxZoom}
             />
+
 
             {/* Constituency layer (rendered underneath counties when active) */}
             {activeLayer === "constituencies" && constituencies && (
