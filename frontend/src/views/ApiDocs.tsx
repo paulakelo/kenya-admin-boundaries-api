@@ -14,7 +14,8 @@ import {
   ArrowLeft,
   Map as MapIcon,
 } from "lucide-react";
-import { ENDPOINTS, type Endpoint } from "../data/apiEndpoints";
+import { ENDPOINTS } from "../data/apiEndpoints";
+import type { Endpoint } from "../data/apiEndpoints";
 
 export default function ApiDocs() {
   const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint>(ENDPOINTS[0]);

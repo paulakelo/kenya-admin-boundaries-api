@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { TECHNICAL_SPECS, type TechSpecTab } from "../../data/portalContent";
+import { TECHNICAL_SPECS } from "../../data/portalContent";
+import type { TechSpecTab } from "../../data/portalContent";
 
 export const TechSpecsSection: React.FC = () => {
   const [activeTabId, setActiveTabId] = useState<TechSpecTab["id"]>("clean_arch");
