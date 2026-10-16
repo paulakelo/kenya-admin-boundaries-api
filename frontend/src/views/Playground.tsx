@@ -8,7 +8,6 @@ import Sidebar from "../components/Sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Layers, X, ArrowLeft, BookOpen } from "lucide-react";
 
-
 const API_BASE = "http://localhost:18080/api/v1";
 type LayerType = "counties" | "constituencies";
 type BasemapType = "dark" | "osm" | "satellite";
@@ -65,10 +64,11 @@ export default function Playground() {
   };
 
   return (
-    <div className="flex h-full w-full overflow-hidden bg-background text-foreground relative">
+    <div className="flex h-full w-full overflow-hidden bg-surface-base text-text-body relative font-sans">
       {/* Collapsible Sidebar */}
       <aside
-        className={`w-[360px] min-w-[360px] h-full transition-all duration-300 z-10 ${
+        aria-label="Administrative Boundaries Explorer"
+        className={`w-80 min-w-80 h-full transition-all duration-200 z-10 ${
           isSidebarOpen ? "block" : "hidden"
         }`}
       >
@@ -79,9 +79,8 @@ export default function Playground() {
         />
       </aside>
 
-
       {/* Map Content Area */}
-      <main className="flex-1 relative w-full h-full bg-black overflow-hidden">
+      <main className="flex-1 relative w-full h-full bg-surface-sunken overflow-hidden">
         {/* Layer & Basemap Switcher Toolbar */}
         <LayerTabs
           activeLayer={activeLayer}
@@ -90,69 +89,74 @@ export default function Playground() {
           onBasemapChange={setBasemap}
         />
 
-        {/* Toggle Sidebar & Back Links floating toolbar */}
-        <div className="absolute top-4 left-4 z-[1000] flex items-center gap-1.5">
+        {/* Floating Toolbar with Navigation */}
+        <nav aria-label="Map Tools" className="absolute top-4 left-4 z-[1000] flex items-center gap-2">
           <button
+            type="button"
             onClick={() => setIsSidebarOpen((prev) => !prev)}
-            className="p-2 rounded-lg bg-card/90 backdrop-blur-md border border-border text-foreground hover:bg-accent shadow-md transition-all text-xs flex items-center gap-1.5"
-            title="Toggle Sidebar"
+            aria-expanded={isSidebarOpen}
+            className="p-2 rounded-md bg-surface-raised border border-border-subtle text-text-heading hover:bg-surface-overlay transition-colors shadow-sm text-xs flex items-center gap-1.5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            title={isSidebarOpen ? "Collapse explorer sidebar" : "Expand explorer sidebar"}
           >
-            <Layers className="h-3.5 w-3.5 text-primary" />
-            <span className="font-semibold">{isSidebarOpen ? "Hide Sidebar" : "Show Explorer"}</span>
+            <Layers className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+            <span className="font-semibold">{isSidebarOpen ? "Hide Explorer" : "Show Explorer"}</span>
           </button>
 
           <Link
             to="/"
-            className="p-2 rounded-lg bg-card/90 backdrop-blur-md border border-border text-foreground hover:bg-accent shadow-md transition-all text-xs flex items-center gap-1 font-semibold"
-            title="Back to Overview"
+            className="p-2 rounded-md bg-surface-raised border border-border-subtle text-text-heading hover:bg-surface-overlay transition-colors shadow-sm text-xs flex items-center gap-1 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            title="Return to Portal Overview"
           >
-            <ArrowLeft className="h-3.5 w-3.5 text-primary" />
+            <ArrowLeft className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
             <span>Home</span>
           </Link>
 
           <Link
             to="/docs"
-            className="p-2 rounded-lg bg-card/90 backdrop-blur-md border border-border text-foreground hover:bg-accent shadow-md transition-all text-xs flex items-center gap-1 font-semibold"
-            title="Open API Docs & Console"
+            className="p-2 rounded-md bg-surface-raised border border-border-subtle text-text-heading hover:bg-surface-overlay transition-colors shadow-sm text-xs flex items-center gap-1 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            title="Open API Reference"
           >
-            <BookOpen className="h-3.5 w-3.5 text-primary" />
+            <BookOpen className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
             <span>Docs</span>
           </Link>
-        </div>
+        </nav>
 
-        {/* Selected Polygon Info Floating Pill */}
+        {/* Selected Polygon Information Panel */}
         {selectedCode && (
-          <div className="absolute bottom-6 left-6 z-[1000] bg-card/95 backdrop-blur-md border border-border/80 rounded-xl p-3.5 shadow-xl max-w-xs animate-in fade-in slide-in-from-bottom-2">
+          <aside
+            aria-label="Selected Boundary Details"
+            className="absolute bottom-6 left-6 z-[1000] bg-surface-raised border border-border-subtle rounded-lg p-4 shadow-xl max-w-xs animate-in fade-in"
+          >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="flex items-center gap-1.5 mb-1">
-                  <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
-                    {activeLayer === "counties" ? "Selected County" : "Selected Constituency"}
-                  </span>
-                </div>
-                <h4 className="text-sm font-bold text-foreground">
+                <span className="text-xs text-text-muted uppercase tracking-wider font-semibold block mb-1">
+                  {activeLayer === "counties" ? "Selected County" : "Selected Constituency"}
+                </span>
+                <h2 className="text-sm font-bold text-text-heading">
                   {selectedFeatureName || selectedCode}
-                </h4>
+                </h2>
                 <div className="flex items-center gap-2 mt-2">
-                  <Badge variant="secondary" className="font-mono text-[10px]">
+                  <Badge variant="secondary" className="font-mono text-xs">
                     Code: {selectedCode}
                   </Badge>
-                  <span className="text-[10px] text-emerald-400 font-medium">
+                  <span className="text-xs text-emerald-400 font-medium">
                     ● GeoJSON Active
                   </span>
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => {
                   setSelectedCode(null);
                   setSelectedFeatureName(null);
                 }}
-                className="text-muted-foreground hover:text-foreground p-0.5"
+                aria-label="Dismiss selection"
+                className="text-text-muted hover:text-text-heading p-1 cursor-pointer rounded focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-3.5 w-3.5" aria-hidden="true" />
               </button>
             </div>
-          </div>
+          </aside>
         )}
 
         {/* Interactive Leaflet Map */}

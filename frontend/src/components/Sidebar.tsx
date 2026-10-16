@@ -145,21 +145,25 @@ export default function Sidebar({
 
         {/* Search Input */}
         <div className="relative mt-3">
-          <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+          <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-text-muted" aria-hidden="true" />
+          <label htmlFor="county-search" className="sr-only">
+            Search county by name or code
+          </label>
           <input
+            id="county-search"
             type="text"
             placeholder="Search county (e.g. Nairobi, KE047)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 text-xs rounded-md bg-background border border-border focus:outline-none focus:ring-1 focus:ring-primary text-foreground placeholder:text-muted-foreground transition-all"
+            className="w-full pl-8 pr-3 py-1.5 text-xs rounded-md bg-surface-base border border-border-subtle focus:outline-none focus:ring-1 focus:ring-accent text-text-heading placeholder:text-text-muted transition-all"
           />
         </div>
       </div>
 
       {/* Counties List Header & count */}
-      <div className="px-4 py-2 border-b border-border/60 bg-muted/30 flex items-center justify-between text-[11px] text-muted-foreground font-medium">
+      <div className="px-4 py-2 border-b border-border-subtle bg-surface-base flex items-center justify-between text-xs text-text-muted font-medium">
         <span>COUNTIES ({filteredCounties.length})</span>
-        <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded">
+        <span className="text-[10px] bg-accent/10 text-accent font-semibold px-1.5 py-0.5 rounded border border-accent/20">
           PostGIS Indexed
         </span>
       </div>
