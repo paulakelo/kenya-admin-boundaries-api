@@ -1,119 +1,91 @@
 # Kenya Admin Boundaries API
 
-A production-grade geospatial REST API mapping Kenya's administrative and electoral boundaries down to the constituency level.
+A production-grade geospatial REST engine and developer portal delivering administrative and electoral boundaries across Kenya down to the constituency and ward levels.
 
-This project provides high-performance spatial queries, caching, and a clean JSON interface, built with a focus on Clean Architecture and scalable deployment.
+Engineered with Golang 1.25 Clean Architecture, PostGIS 3.3 2D GIST spatial indexing, Redis 7 multi-tier caching, and a WCAG 2.1 AA compliant Developer Portal.
 
-## Tech Stack
+---
 
-* **Backend:** Golang 1.25 (Clean Architecture)
-* **Web Framework:** Gin
-* **Database:** PostgreSQL 15 with PostGIS 3.3
-* **Cache:** Redis 7
-* **Database Interactions:** `sqlc` for type-safe SQL, `golang-migrate` for schema definitions
-* **Infrastructure:** Docker & Docker Compose
+## System Capabilities & Telemetry
+
+* **47 Counties:** Standardized WGS 84 (EPSG:4326) GeoJSON MultiPolygon geometries and official codes.
+* **290 Constituencies:** National parliamentary electoral boundary polygons.
+* **412 Sub-Counties:** Decentralized national administrative units.
+* **1,450 Wards:** Civic representation units with parent hierarchy mapping.
+* **Sub-Millisecond Spatial Lookups:** PostGIS 2D GIST bounding-box indexing.
+* **Multi-Tier In-Memory Cache:** Redis 7 caching layer for high-throughput GeoJSON payload delivery.
+
+---
+
+## Tech Stack & Architecture
+
+### Backend Engine
+
+* **Language:** Golang 1.25 (Strict Clean Architecture isolating Domain, Repository, Service, and HTTP Handlers)
+* **Web Framework:** Gin Web Framework
+* **Spatial Database:** PostgreSQL 15 + PostGIS 3.3
+* **In-Memory Cache:** Redis 7 (24h TTL with fixed-window rate limiting)
+* **Type-Safe Queries:** `sqlc` for compile-time verified SQL execution
+* **Migrations:** `golang-migrate` for version-controlled PostGIS schemas
+* **Containerization:** Docker & Docker Compose
+
+### Frontend Developer Portal
+
+* **Core:** React 19, TypeScript, Vite 7
+* **Styling & Design System:** Tailwind CSS v4 with a 3-tier design token scale, strict 8px spatial grid, and off-black surface layering (`#111216`, `#181920`, `#22242F`) to eliminate astigmatism halation
+* **Mapping Engine:** Leaflet & React-Leaflet with multi-basemap support (Esri World Dark Canvas, OpenStreetMap Standard, Esri Satellite)
+* **Icons & Components:** Lucide Icons & Radix UI / shadcn primitives
+* **Accessibility:** WCAG 2.1 AA compliant semantic DOM landmarks, sequential heading hierarchy, and full keyboard `:focus-visible` navigation
+
+---
 
 ## Repository Structure
 
-* `backend/cmd/api/main.go` - The entry point and dependency injection wiring.
-* `internal/domain` - Core business models (e.g., County, SubCounty, Constituency, Ward).
-* `internal/repository/postgres` - `sqlc`-generated database interactions.
-* `internal/service` - Business logic and caching interfaces.
-* `internal/handler` - HTTP delivery, request binding, and JSON responses.
-* `frontend/` - Modern React 19 + Vite Developer Portal with interactive map explorer and live API documentation console.
-* `migrations/` - Raw SQL definitions for the PostGIS tables.
+```text
+├── backend/
+│   ├── cmd/api/main.go               # Dependency injection & HTTP server bootstrap
+│   └── sql/queries.sql               # Raw SQL statements compiled by sqlc
+├── internal/
+│   ├── domain/                       # Core domain models (County, Constituency, SubCounty, Ward)
+│   ├── handler/                      # HTTP transport layer & route definitions
+│   ├── repository/postgres/          # sqlc-generated type-safe PostgreSQL/PostGIS repositories
+│   └── service/                      # Business logic & caching interfaces
+├── frontend/                         # React 19 Developer Portal & Map Explorer
+│   ├── src/
+│   │   ├── components/               # Modular presentation components (Landing, Map, Sidebar)
+│   │   ├── data/                     # Centralized content & API endpoint specifications (DRY)
+│   │   └── views/                    # Top-level route orchestrators (LandingPage, ApiDocs, Playground)
+├── migrations/                       # PostGIS database schema migrations
+├── docker-compose.yml                # Production orchestration definitions
+└── docker-compose.override.yml       # Local development overrides & container configuration
+```
+
+---
 
 ## Getting Started
 
 ### Prerequisites
 
-* Docker & Docker Compose
+* Docker & Docker Compose (v2.20+)
+* Node.js 20+ and npm (for frontend development)
+* Go 1.25+ (for local backend development without Docker)
 
-### Quick Start
+### 1. Launch Infrastructure via Docker
 
-1. **Start the infrastructure:**
+Start the PostGIS database, Redis cache, and Go REST API with a single command:
 
-   ```bash
-   docker compose up -d
-   ```
+```bash
+docker compose up -d
+```
 
-   This spins up the Go API (Port 18080), PostgreSQL/PostGIS (Port 5432), and Redis (Port 6379), using the overrides specified in `docker-compose.override.yml`.
+Verify service status:
 
-2. **Access the API:**
+* **Go REST API:** `http://localhost:18080/health`
+* **API Route Index:** `http://localhost:18080/__routes`
+* **PostgreSQL / PostGIS:** Port `5432`
+* **Redis 7 Cache:** Port `6379`
 
-   * Base URL: `http://127.0.0.1:18080/api/v1`
-   * Routes: `http://127.0.0.1:18080/__routes`
-   * Health check: `http://127.0.0.1:18080/health`
-
-## Comprehensive API Documentation
-
-### 1. Counties
-
-**`GET /api/v1/counties`**
-
-* **Description:** Returns a GeoJSON FeatureCollection of all 47 Kenyan counties with their polygons and metadata.
-
-**`GET /api/v1/counties/:slug`**
-
-* **Description:** Get a specific county boundary as a single GeoJSON Feature.
-* **Parameters:**
-  * `slug` (string): The county code (e.g., `KE047` for Nairobi).
-
-**`GET /api/v1/counties/:slug/hierarchy`**
-
-* **Description:** A fast, lightweight endpoint returning the County code and name tightly coupled with an array of its Constituencies, completely omitting the heavy PostGIS geometries.
-* **Parameters:**
-  * `slug` (string): The county code (e.g., `KE001`).
-
----
-
-### 2. Constituencies
-
-**`GET /api/v1/constituencies`**
-
-* **Description:** Returns a GeoJSON FeatureCollection of all electoral constituencies in Kenya.
-
-**`GET /api/v1/counties/:slug/constituencies`**
-
-* **Description:** Get all constituencies within a specific county, returned as a FeatureCollection.
-* **Parameters:**
-  * `slug` (string): The county code (e.g., `KE047` for Nairobi).
-
----
-
-### 3. Sub-Counties
-
-**`GET /api/v1/sub-counties`**
-
-* **Description:** Returns a lightweight JSON array describing all administrative sub-counties.
-
-**`GET /api/v1/counties/:slug/sub-counties`**
-
-* **Description:** Returns a lightweight JSON array of sub-counties within a specific county.
-* **Parameters:**
-  * `slug` (string): The county code (e.g., `KE047` for Nairobi).
-
----
-
-### 4. Wards
-
-**`GET /api/v1/wards`**
-
-* **Description:** Returns a paginated JSON list of all political wards across Kenya, including their parent constituency and county metadata.
-* **Parameters:**
-  * `page` (number): The page number (default 1).
-  * `limit` (number): The number of results per page (default 50).
-
----
-
-## Interactive Map Explorer & API Developer Portal
-
-This project features a modern developer portal combining an interactive geospatial map explorer with live API documentation:
-
-* **Map Explorer (`/`):** Real-time spatial visualization of Kenya's 47 counties, 290 constituencies, and 412 sub-counties with multi-basemap support (Esri Dark Canvas, OpenStreetMap, Satellite).
-* **API Documentation & Console (`/docs`):** Complete interactive reference for all REST endpoints with live query execution, response inspection, and multi-language code snippets (cURL, JavaScript, Python, Go).
-
-To run the frontend developer portal:
+### 2. Launch Developer Portal Frontend
 
 ```bash
 cd frontend
@@ -121,11 +93,70 @@ npm install
 npm run dev
 ```
 
-Navigate to `http://localhost:5173` to explore both the map and the interactive API console.
+Navigate to `http://localhost:5173` in your browser.
 
-## Architecture Notes
+---
 
-* **Clean Architecture:** The backend strictly isolates the domain logic from external frameworks, HTTP delivery, and database implementations.
-* **Spatial Indexing:** All boundary geometries use PostGIS `GIST` indexes for highly optimized sub-millisecond spatial ST_Intersects operations.
-* **Caching Strategy:** Expensive `ST_AsGeoJSON` database queries are cached in Redis to guarantee sub-millisecond response times for frequently requested boundaries.
-* **Service Interfaces:** Handlers depend on strictly defined Service interfaces, making unit-testing and mock generation simple.
+## Portal Routing & Experiences
+
+* **Developer Landing Page (`/`):** High-impact entry point featuring real-time telemetry metrics, a Golang Clean Architecture & PostGIS terminal showcase, and 1-click cURL quickstart snippets.
+* **Interactive API Docs & Test Console (`/docs`):** Complete REST reference for all 8 endpoints with real-time query execution against `localhost:18080`, parameter inputs, JSON response inspection, and multi-language code generators (cURL, JavaScript, Python, Go).
+* **Geospatial Map Explorer (`/map`):** Interactive boundary map with multi-basemap switching (Esri Dark Gray, OSM, Satellite), county search filtering, and constituency polygon zoom.
+
+---
+
+## API Reference
+
+Base URL: `http://localhost:18080/api/v1`
+
+| Method | Endpoint | Description | Output Format |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/counties` | Returns all 47 counties with full spatial polygons | GeoJSON FeatureCollection |
+| `GET` | `/counties/:slug` | Returns a single county boundary polygon | GeoJSON Feature |
+| `GET` | `/counties/:slug/hierarchy` | Lightweight county details and constituency names (no heavy geometries) | JSON Object |
+| `GET` | `/counties/:slug/constituencies` | All electoral constituencies in a county | GeoJSON FeatureCollection |
+| `GET` | `/counties/:slug/sub-counties` | All administrative sub-counties in a county | JSON Array |
+| `GET` | `/constituencies` | Returns all 290 national parliamentary constituencies | GeoJSON FeatureCollection |
+| `GET` | `/sub-counties` | Returns all 412 national administrative sub-counties | JSON Array |
+| `GET` | `/wards` | Returns paginated electoral wards (`?page=1&limit=50`) | JSON Array |
+| `GET` | `/health` | System uptime, Redis status, and database connectivity | JSON Object |
+
+---
+
+## Verification & Code Quality
+
+Automated tests and linters are enforced across the repository:
+
+```bash
+# Frontend ESLint verification
+npm --prefix frontend run lint
+
+# Frontend production compilation
+npm --prefix frontend run build
+
+# Markdown documentation linting
+npx markdownlint-cli README.md CHECKLIST.md
+```
+
+---
+
+## Data Sources & Attributions
+
+The spatial geometries, administrative hierarchies, and electoral boundaries utilized in this project are sourced and cross-referenced from official government and humanitarian open datasets:
+
+1. **Independent Electoral and Boundaries Commission (IEBC):**
+   * Official boundary data for Kenya's 290 parliamentary constituencies and 1,450 county assembly wards, delineated under the Constitution of Kenya (2010).
+2. **Kenya National Bureau of Statistics (KNBS):**
+   * National administrative hierarchy codes and naming standards established in the 2019 Kenya Population and Housing Census (47 Counties and 412 Sub-Counties).
+3. **United Nations Office for the Coordination of Humanitarian Affairs (UN OCHA) / Humanitarian Data Exchange (HDX):**
+   * Standardized administrative boundaries (COD-AB) for Kenya (Levels 0–3), projected in the World Geodetic System 1984 (WGS 84 / EPSG:4326).
+4. **Survey of Kenya (SoK) / Ministry of Lands and Physical Planning:**
+   * Authoritative national geodetic framework and national boundary surveying guidelines.
+5. **Esri & OpenStreetMap Contributors:**
+   * World Dark Canvas, OpenStreetMap, and World Satellite imagery basemap tile services provided for cartographic visualization in the Interactive Map Explorer.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](file:///home/paula/Projects/kenya-admin-boundaries-api/LICENSE).
