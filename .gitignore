@@ -97,3 +97,5 @@ aws_credentials
 *.swp
 *.swo
 DEPLOYMENT.md
+PROJECT_ARCHITECTURE.md
+docs/PROJECT_ARCHITECTURE.md
