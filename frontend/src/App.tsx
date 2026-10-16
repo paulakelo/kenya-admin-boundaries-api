@@ -11,24 +11,6 @@ function NavigationHeader() {
 
   return (
     <header className="h-14 border-b border-white/10 bg-[#0D0E15]/90 backdrop-blur-md flex items-center justify-between px-6 z-50 shrink-0 font-mono">
-      {/* Brand & System Logo */}
-      <div className="flex items-center gap-3">
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="h-7 w-7 rounded bg-[#D1FF00] flex items-center justify-center text-[#0D0E15] font-black text-xs font-mono">
-            NX
-          </div>
-          <div>
-            <div className="font-bold text-xs tracking-wider text-white group-hover:text-[#D1FF00] transition-colors flex items-center gap-1.5">
-              <span>KENYA ADMIN BOUNDARIES</span>
-              <span className="text-[#D1FF00]">// API</span>
-            </div>
-            <div className="text-[10px] text-[#8B94A5] tracking-tight">
-              PRECISION GEOSPATIAL ENGINE
-            </div>
-          </div>
-        </Link>
-      </div>
-
       {/* Navigation Switcher Tabs */}
       <nav className="flex items-center gap-1 bg-[#141724] p-1 rounded-lg border border-white/10">
         <Link
