@@ -18,32 +18,35 @@ interface KenyaMapProps {
 }
 
 
-function FlyToCounty({
+function FlyToFeature({
     counties,
+    constituencies,
     code,
 }: {
     counties: FeatureCollection | null;
+    constituencies: FeatureCollection | null;
     code: string | null;
 }) {
     const map = useMap();
 
     useEffect(() => {
-        if (!code || !counties) return;
+        if (!code) return;
 
-        const feature = counties.features.find(
-            (f) => f.properties?.code === code
-        );
+        const feature =
+            counties?.features.find((f) => f.properties?.code === code) ||
+            constituencies?.features.find((f) => f.properties?.code === code);
         if (!feature) return;
 
         const layer = L.geoJSON(feature as GeoJSON.Feature);
         const bounds = layer.getBounds();
         if (bounds.isValid()) {
-            map.flyToBounds(bounds, { padding: [30, 30], duration: 0.8 });
+            map.flyToBounds(bounds, { padding: [40, 40], duration: 0.8 });
         }
-    }, [code, counties, map]);
+    }, [code, counties, constituencies, map]);
 
     return null;
 }
+
 
 // Style constants
 const COUNTY_COLOR = "#00d4ff";
@@ -255,7 +258,8 @@ export default function KenyaMap({
                 />
             )}
 
-            <FlyToCounty counties={counties} code={flyToCode} />
+            <FlyToFeature counties={counties} constituencies={constituencies} code={flyToCode} />
+
         </MapContainer>
     );
 }

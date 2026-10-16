@@ -36,6 +36,16 @@ export default function Playground() {
 
   // County selected from sidebar
   const handleCountySelect = (code: string, name: string) => {
+    setActiveLayer("counties");
+    setSelectedCode(code);
+    setSelectedFeatureName(name);
+    setFlyToCode(code);
+    setTimeout(() => setFlyToCode(null), 1000);
+  };
+
+  // Constituency selected from sidebar
+  const handleConstituencySelect = (code: string, name: string) => {
+    setActiveLayer("constituencies");
     setSelectedCode(code);
     setSelectedFeatureName(name);
     setFlyToCode(code);
@@ -61,8 +71,13 @@ export default function Playground() {
           isSidebarOpen ? "block" : "hidden"
         }`}
       >
-        <Sidebar onCountySelect={handleCountySelect} selectedCode={selectedCode} />
+        <Sidebar
+          onCountySelect={handleCountySelect}
+          onConstituencySelect={handleConstituencySelect}
+          selectedCode={selectedCode}
+        />
       </aside>
+
 
       {/* Map Content Area */}
       <main className="flex-1 relative w-full h-full bg-black overflow-hidden">

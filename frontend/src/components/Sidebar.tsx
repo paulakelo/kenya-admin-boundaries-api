@@ -38,25 +38,35 @@ interface SubCountiesResponse {
   sub_counties: SubCounty[];
 }
 
+interface ConstituencyItem {
+  code?: string;
+  name?: string;
+  constituency_code?: string;
+  constituency_name?: string;
+}
+
 interface HierarchyResponse {
   county_code: string;
   county_name: string;
-  constituencies: Array<{
-    constituency_code: string;
-    constituency_name: string;
-  }>;
+  constituencies: ConstituencyItem[];
 }
 
 interface SidebarProps {
   onCountySelect: (code: string, name: string) => void;
+  onConstituencySelect?: (code: string, name: string) => void;
   selectedCode?: string | null;
 }
 
-export default function Sidebar({ onCountySelect, selectedCode }: SidebarProps) {
+export default function Sidebar({
+  onCountySelect,
+  onConstituencySelect,
+  selectedCode,
+}: SidebarProps) {
   const [counties, setCounties] = useState<CountyFeature[]>([]);
   const [subCounties, setSubCounties] = useState<Record<string, SubCounty[]>>({});
-  const [constituenciesMap, setConstituenciesMap] = useState<Record<string, Array<{ constituency_code: string; constituency_name: string }>>>({});
+  const [constituenciesMap, setConstituenciesMap] = useState<Record<string, ConstituencyItem[]>>({});
   const [loadingCode, setLoadingCode] = useState<string | null>(null);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [viewDetail, setViewDetail] = useState<"subcounties" | "constituencies">("subcounties");
 
@@ -253,20 +263,41 @@ export default function Sidebar({ onCountySelect, selectedCode }: SidebarProps) 
                         )
                       ) : (
                         constituencyList && constituencyList.length > 0 ? (
-                          <div className="max-h-40 overflow-y-auto pr-1 space-y-1">
-                            {constituencyList.map((c) => (
-                              <div
-                                key={c.constituency_code}
-                                className="text-[11px] text-foreground/80 pl-2.5 py-1 border-l-2 border-rose-500/40 hover:border-rose-500 hover:text-foreground transition-colors flex items-center justify-between rounded-r bg-muted/20"
-                              >
-                                <span>{c.constituency_name}</span>
-                                <span className="text-[9px] font-mono text-muted-foreground">
-                                  {c.constituency_code}
-                                </span>
-                              </div>
-                            ))}
+                          <div className="max-h-48 overflow-y-auto pr-1 space-y-1">
+                            {constituencyList.map((c) => {
+                              const cCode = c.code || c.constituency_code || "";
+                              const cName = c.name || c.constituency_name || "Constituency";
+                              const isCSelected = selectedCode === cCode;
+
+                              return (
+                                <button
+                                  key={cCode}
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onConstituencySelect?.(cCode, cName);
+                                  }}
+                                  className={`w-full text-left text-[11px] pl-2.5 pr-2 py-1.5 border-l-2 transition-all flex items-center justify-between rounded-r group cursor-pointer ${
+                                    isCSelected
+                                      ? "border-rose-500 bg-rose-500/20 text-rose-300 font-semibold"
+                                      : "border-rose-500/40 text-foreground/80 hover:border-rose-500 hover:text-foreground hover:bg-rose-500/10"
+                                  }`}
+                                  title={`Click to view and zoom to ${cName}`}
+                                >
+                                  <span className="truncate">{cName}</span>
+                                  <span
+                                    className={`text-[9px] font-mono shrink-0 ml-1.5 ${
+                                      isCSelected ? "text-rose-300 font-bold" : "text-muted-foreground"
+                                    }`}
+                                  >
+                                    {cCode}
+                                  </span>
+                                </button>
+                              );
+                            })}
                           </div>
                         ) : (
+
                           <p className="text-[11px] text-muted-foreground italic py-1">
                             No constituency data loaded
                           </p>
