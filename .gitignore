@@ -97,7 +97,4 @@ aws_credentials
 *.swp
 *.swo
 DEPLOYMENT.md
-PROJECT_ARCHITECTURE.md
 .agents/
-
-docs/PROJECT_ARCHITECTURE.md
