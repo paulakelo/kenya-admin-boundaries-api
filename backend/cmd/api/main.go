@@ -10,12 +10,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/paula-dot/kenya-admin-boundaries-api/internal/cache"
 	"github.com/paula-dot/kenya-admin-boundaries-api/internal/config"
 	"github.com/paula-dot/kenya-admin-boundaries-api/internal/handler"
 	"github.com/paula-dot/kenya-admin-boundaries-api/internal/middleware"
 	"github.com/paula-dot/kenya-admin-boundaries-api/internal/repository"
 	"github.com/paula-dot/kenya-admin-boundaries-api/internal/repository/postgres"
-	redisRepo "github.com/paula-dot/kenya-admin-boundaries-api/internal/repository/redis"
 	"github.com/paula-dot/kenya-admin-boundaries-api/internal/service"
 
 	"github.com/gin-gonic/gin"
@@ -85,26 +85,16 @@ func main() {
 	// create ward repository
 	wardRepo := postgres.NewWardRepository(dbPool)
 
-	// Initialize redis cache if configured; otherwise fall back to noopCache
-	var cacheRepo service.CacheRepository
-	// Also create a redis.Client for the SpatialService. Parse cfg.RedisURL if present.
+	// Initialize thread-safe in-process cache for GeoJSON and reference metadata
+	inMemoryCache := cache.NewInMemoryCache()
+	defer inMemoryCache.Close()
+
+	// Initialize Redis client strictly for rate limiting during Milestone 1
 	var rdb *redis.Client
 	if cfg.RedisURL == "" {
-		log.Println("REDIS_URL not set; using noop cache (development mode)")
-		cacheRepo = &noopCache{}
-		// create a local redis client pointing at localhost for best-effort caching in dev
+		log.Println("REDIS_URL not set; rate limiter running in best-effort local mode")
 		rdb = redis.NewClient(&redis.Options{Addr: "localhost:6379", Password: "", DB: 0})
 	} else {
-		// Try to initialize both the repository wrapper and the raw redis client.
-		r, err := redisRepo.NewCacheRepository(cfg.RedisURL)
-		if err != nil {
-			log.Printf("Unable to initialize redis cache repo: %v; falling back to noop cache\n", err)
-			cacheRepo = &noopCache{}
-		} else {
-			cacheRepo = r
-		}
-
-		// Parse cfg.RedisURL to extract host:port and optional password for go-redis
 		addr := cfg.RedisURL
 		password := ""
 		if u, err := url.Parse(cfg.RedisURL); err == nil && u.Host != "" {
@@ -118,20 +108,21 @@ func main() {
 		rdb = redis.NewClient(&redis.Options{Addr: addr, Password: password, DB: 0})
 	}
 
-	// Attempt a lightweight ping to Redis; don't fail startup if Redis is unreachable
+	// Attempt a lightweight ping to Redis for rate-limiting readiness
 	if rdb != nil {
 		if err := rdb.Ping(ctx).Err(); err != nil {
-			log.Printf("Warning: Redis ping failed: %v (continuing without cache client)\n", err)
+			log.Printf("Warning: Redis ping failed for rate limiter: %v (rate limiter will fail open)\n", err)
 		}
 	}
 
 	spatialRepo := &repository.SpatialRepository{DB: dbPool}
 
-	countySvc := service.NewCountyService(pgRepo, cacheRepo, spatialRepo)
-	consSvc := service.NewConstituencyService(consRepo, cacheRepo)
-	spatialSvc := service.NewSpatialService(sqlcQueries, rdb)
-	subCountySvc := service.NewSubCountyService(subCountyRepo, cacheRepo)
-	wardSvc := service.NewWardService(wardRepo, cacheRepo)
+	// All services now utilize the high-speed in-process cache
+	countySvc := service.NewCountyService(pgRepo, inMemoryCache, spatialRepo)
+	consSvc := service.NewConstituencyService(consRepo, inMemoryCache)
+	spatialSvc := service.NewSpatialService(sqlcQueries, inMemoryCache)
+	subCountySvc := service.NewSubCountyService(subCountyRepo, inMemoryCache)
+	wardSvc := service.NewWardService(wardRepo, inMemoryCache)
 
 	// Use the handler.AppServices type so SetupRouter can register explicit handlers
 	svc := &handler.AppServices{

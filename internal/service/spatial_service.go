@@ -7,22 +7,20 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/redis/go-redis/v9"
-
 	db "github.com/paula-dot/kenya-admin-boundaries-api/internal/repository/postgres"
 )
 
 // SpatialService acts as the bridge between the Gin handler and the Postgres engine
 type SpatialService struct {
 	queries *db.Queries
-	redis   *redis.Client
+	cache   CacheRepository
 }
 
-// NewSpatialService initializes the service with database access
-func NewSpatialService(q *db.Queries, rdb *redis.Client) *SpatialService {
+// NewSpatialService initializes the service with database access and an abstract cache
+func NewSpatialService(q *db.Queries, cache CacheRepository) *SpatialService {
 	return &SpatialService{
 		queries: q,
-		redis:   rdb,
+		cache:   cache,
 	}
 }
 
@@ -45,8 +43,8 @@ func (s *SpatialService) GetIntersection(ctx context.Context, lat, lon float64) 
 	cacheKey := fmt.Sprintf("spatial:intersect:lat=%.4f:lon=%.4f", lat, lon)
 
 	// 2. Try Cache
-	if s.redis != nil {
-		cachedResult, err := s.redis.Get(ctx, cacheKey).Bytes()
+	if s.cache != nil {
+		cachedResult, err := s.cache.Get(ctx, cacheKey)
 		if err == nil && cachedResult != nil {
 			var cachedResp IntersectResponse
 			if err := json.Unmarshal(cachedResult, &cachedResp); err == nil {
@@ -63,7 +61,6 @@ func (s *SpatialService) GetIntersection(ctx context.Context, lat, lon float64) 
 
 	row, err := s.queries.GetIntersectingBoundary(ctx, params)
 	if err != nil {
-		// In production, log the exact error, but return a clean error to the user
 		return nil, err
 	}
 
@@ -74,12 +71,12 @@ func (s *SpatialService) GetIntersection(ctx context.Context, lat, lon float64) 
 		ConstituencyName: row.ConstituencyName,
 	}
 
-	// 4. Save to Cache
-	if s.redis != nil {
+	// 4. Save to Cache asynchronously
+	if s.cache != nil {
 		if outBytes, err := json.Marshal(resp); err == nil {
 			go func(ctx context.Context, key string, b []byte) {
-				_ = s.redis.Set(ctx, key, b, 24*time.Hour).Err()
-			}(context.Background(), cacheKey, outBytes) // Using Background context so async save survives request death
+				_ = s.cache.Set(ctx, key, b, 24*time.Hour)
+			}(context.Background(), cacheKey, outBytes)
 		}
 	}
 
@@ -93,54 +90,47 @@ func (s *SpatialService) GetLocationByCoordinates(ctx context.Context, lon, lat 
 	// 1. Generate Cache Key (Round to 4 decimal places for ~11m precision)
 	cacheKey := fmt.Sprintf("spatial:lookup:%.4f:%.4f", lon, lat)
 
-	// 2. Try to fetch from Redis Cache
-	cachedResult, err := s.redis.Get(ctx, cacheKey).Result()
-	if err == redis.Nil {
-		// CACHE MISS: Proceed to query PostGIS
-		params := db.GetIntersectingBoundaryParams{Longitude: lon, Latitude: lat}
-		row, err := s.queries.GetIntersectingBoundary(ctx, params)
-		if err != nil {
-			return nil, err
+	// 2. Try to fetch from Cache
+	if s.cache != nil {
+		cachedResult, err := s.cache.Get(ctx, cacheKey)
+		if err == nil && cachedResult != nil {
+			var hitResult interface{}
+			if err := json.Unmarshal(cachedResult, &hitResult); err == nil {
+				return hitResult, nil
+			}
 		}
+	}
 
-		// Build a minimal FeatureCollection-like structure from the DB row
-		dbResult := map[string]interface{}{
-			"type": "FeatureCollection",
-			"features": []interface{}{
-				map[string]interface{}{
-					"county_code":       row.CountyCode,
-					"county_name":       row.CountyName,
-					"constituency_code": row.ConstituencyCode,
-					"constituency_name": row.ConstituencyName,
-				},
+	// 3. Fallback to PostGIS on cache miss
+	params := db.GetIntersectingBoundaryParams{Longitude: lon, Latitude: lat}
+	row, err := s.queries.GetIntersectingBoundary(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+
+	// Build a minimal FeatureCollection-like structure from the DB row
+	dbResult := map[string]interface{}{
+		"type": "FeatureCollection",
+		"features": []interface{}{
+			map[string]interface{}{
+				"county_code":       row.CountyCode,
+				"county_name":       row.CountyName,
+				"constituency_code": row.ConstituencyCode,
+				"constituency_name": row.ConstituencyName,
 			},
-		}
-
-		// Serialize the PostGIS result to JSON
-		resultJSON, marshalErr := json.Marshal(dbResult)
-		if marshalErr != nil {
-			return nil, fmt.Errorf("failed to marshal db result: %w", marshalErr)
-		}
-
-		// 3. Save to Redis with a 24-hour TTL (Time To Live)
-		err = s.redis.Set(ctx, cacheKey, resultJSON, 24*time.Hour).Err()
-		if err != nil {
-			// Log the error, but don't fail the request (cache writing shouldn't break the API)
-			fmt.Printf("Warning: Failed to set cache for %s: %v\n", cacheKey, err)
-		}
-
-		return dbResult, nil
-
-	} else if err != nil {
-		// Handle actual Redis connection errors
-		return nil, fmt.Errorf("redis error: %w", err)
+		},
 	}
 
-	// CACHE HIT: Unmarshal and return the cached data instantly
-	var hitResult interface{}
-	if err := json.Unmarshal([]byte(cachedResult), &hitResult); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal cached result: %w", err)
+	// Serialize the PostGIS result to JSON
+	resultJSON, marshalErr := json.Marshal(dbResult)
+	if marshalErr != nil {
+		return nil, fmt.Errorf("failed to marshal db result: %w", marshalErr)
 	}
 
-	return hitResult, nil
+	// 4. Save to cache
+	if s.cache != nil {
+		_ = s.cache.Set(ctx, cacheKey, resultJSON, 24*time.Hour)
+	}
+
+	return dbResult, nil
 }
