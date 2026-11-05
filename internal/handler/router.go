@@ -313,9 +313,9 @@ func SetupRouter(svc interface{}, v1Middleware ...gin.HandlerFunc) *gin.Engine {
 			}
 		}
 
-		// SPA Fallback: Any non-API GET route serves index.html so React Router handles navigation
+		// SPA Fallback: Any non-API GET or HEAD route serves index.html so React Router handles navigation
 		r.NoRoute(func(c *gin.Context) {
-			if c.Request.Method == http.MethodGet && !strings.HasPrefix(c.Request.URL.Path, "/api") && c.Request.URL.Path != "/health" && c.Request.URL.Path != "/__routes" {
+			if (c.Request.Method == http.MethodGet || c.Request.Method == http.MethodHead) && !strings.HasPrefix(c.Request.URL.Path, "/api") && c.Request.URL.Path != "/health" && c.Request.URL.Path != "/__routes" {
 				indexPath := filepath.Join(staticDir, "index.html")
 				if _, err := os.Stat(indexPath); err == nil {
 					c.File(indexPath)
