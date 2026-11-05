@@ -9,12 +9,10 @@ services:
       -c maintenance_work_mem=16MB
       -c effective_cache_size=128MB
       -c max_connections=25
-    # In production, provide secrets via Docker secrets (or a secrets manager).
-    # This service reads POSTGRES_PASSWORD from the file mounted at /run/secrets/postgres_password
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-user}
       POSTGRES_DB: ${POSTGRES_DB:-spatial_db}
-    ports: [] # avoid publishing ports by default in production
+    ports: [] # published via docker-compose.override.yml in dev
     volumes:
       - pg_data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -25,6 +23,23 @@ services:
       retries: 5
     secrets:
       - postgres_password
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spatial_api
+    environment:
+      PORT: 8080
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      DATABASE_URL: postgres://${POSTGRES_USER:-user}:Kapcherop250.@db:5432/${POSTGRES_DB:-spatial_db}?sslmode=disable
+      STATIC_DIR: /app/frontend/dist
+    ports:
+      - "18080:8080"
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   pg_data:

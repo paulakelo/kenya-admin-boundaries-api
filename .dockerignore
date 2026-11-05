@@ -1,0 +1,11 @@
+.git
+.agents
+.vscode
+.idea
+*.log
+bin/
+frontend/node_modules/
+frontend/dist/
+docs/
+secrets/
+.env*

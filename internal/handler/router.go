@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -24,32 +27,25 @@ type AppServices struct {
 
 // SetupRouter wires service into HTTP routes and returns a *gin.Engine.
 // Accepts optional middleware functions that will be applied to the /api/v1
-// route group. This allows callers to attach rate-limiters or auth middleware
-// without modifying the internal router implementation.
+// route group. This allows callers to attach rate-limiters, cache-control or auth middleware.
 func SetupRouter(svc interface{}, v1Middleware ...gin.HandlerFunc) *gin.Engine {
 	r := gin.Default()
 
-	// Debug middleware: log raw request info to help diagnose unexpected path rewrites
-	// (kept minimal and only enabled in development). It logs RequestURI, URL.Path
-	// and a few proxy headers which often cause path-prefixing issues.
-
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:5174", "http://localhost:3000"},
+		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "If-None-Match"},
+		ExposeHeaders:    []string{"Content-Length", "ETag", "Cache-Control", "X-RateLimit-Limit", "X-RateLimit-Remaining", "X-RateLimit-Reset"},
+		AllowCredentials: false,
 	}))
 
 	r.Use(func(c *gin.Context) {
-		log.Printf("[REQ] Method=%s RequestURI=%s URL.Path=%s Host=%s Referer=%s X-Forwarded-Host=%s X-Forwarded-Proto=%s\n",
+		log.Printf("[REQ] Method=%s RequestURI=%s URL.Path=%s Host=%s Referer=%s\n",
 			c.Request.Method,
 			c.Request.RequestURI,
 			c.Request.URL.Path,
 			c.Request.Host,
 			c.GetHeader("Referer"),
-			c.GetHeader("X-Forwarded-Host"),
-			c.GetHeader("X-Forwarded-Proto"),
 		)
 		c.Next()
 	})
@@ -57,28 +53,14 @@ func SetupRouter(svc interface{}, v1Middleware ...gin.HandlerFunc) *gin.Engine {
 	// create the /api/v1 group and apply any provided middleware
 	v1 := r.Group("/api/v1", v1Middleware...)
 	{
-		// List all counties using the service method that returns a FeatureCollection
+		// List all counties as GeoJSON FeatureCollection
 		v1.GET("/counties", func(c *gin.Context) {
 			ctx := c.Request.Context()
 
-			// runtime assertion for ListCounties
 			type listSvc interface {
 				ListCountiesAsFeatureCollection(ctx context.Context) (*geojson.FeatureCollection, error)
 			}
 
-			// Fallback: if svc implements the concrete CountyService, call its method directly
-			if s, ok := svc.(*service.CountyService); ok {
-				fc, err := s.ListCountiesAsFeatureCollection(ctx)
-				if err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-					return
-				}
-				out, _ := json.Marshal(fc)
-				c.Data(http.StatusOK, "application/geo+json", out)
-				return
-			}
-
-			// Check for AppServices wrapper (used when main.go passes *AppServices)
 			if svcApp, ok := svc.(*AppServices); ok && svcApp.County != nil {
 				fc, err := svcApp.County.ListCountiesAsFeatureCollection(ctx)
 				if err != nil {
@@ -90,7 +72,17 @@ func SetupRouter(svc interface{}, v1Middleware ...gin.HandlerFunc) *gin.Engine {
 				return
 			}
 
-			// If svc implements the interface, use it (keeps tests flexible)
+			if s, ok := svc.(*service.CountyService); ok {
+				fc, err := s.ListCountiesAsFeatureCollection(ctx)
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+					return
+				}
+				out, _ := json.Marshal(fc)
+				c.Data(http.StatusOK, "application/geo+json", out)
+				return
+			}
+
 			if s, ok := svc.(listSvc); ok {
 				fc, err := s.ListCountiesAsFeatureCollection(context.Background())
 				if err != nil {
@@ -123,17 +115,23 @@ func SetupRouter(svc interface{}, v1Middleware ...gin.HandlerFunc) *gin.Engine {
 			c.JSON(http.StatusNotImplemented, gin.H{"error": "ListAllAsFeatureCollection not implemented for constituencies"})
 		})
 
-		// The County-by-slug, constituencies, wards and spatial intersect routes depend
-		// on additional service methods that may not be implemented on the core
-		// CountyService yet. We perform a runtime type-assertion and return 501
-		// Not Implemented when those helpers are not available.
-
 		// GET /api/v1/counties/:slug
 		v1.GET("/counties/:slug", func(c *gin.Context) {
 			slug := c.Param("slug")
 			ctx := c.Request.Context()
 
-			// optional interface for slug lookup
+			if svcApp, ok := svc.(*AppServices); ok && svcApp.County != nil {
+				cnt, err := svcApp.County.GetCountyBySlug(ctx, slug)
+				if err != nil {
+					c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+					return
+				}
+				fc := buildFeatureCollectionFromCounties([]*domain.County{cnt})
+				out, _ := json.Marshal(fc)
+				c.Data(http.StatusOK, "application/geo+json", out)
+				return
+			}
+
 			type slugSvc interface {
 				GetCountyBySlug(ctx context.Context, slug string) (*domain.County, error)
 			}
@@ -154,7 +152,6 @@ func SetupRouter(svc interface{}, v1Middleware ...gin.HandlerFunc) *gin.Engine {
 		})
 
 		// GET /api/v1/counties/:slug/hierarchy
-		// Returns lightweight metadata combining county info and constituency list
 		v1.GET("/counties/:slug/hierarchy", func(c *gin.Context) {
 			slug := c.Param("slug")
 			ctx := c.Request.Context()
@@ -200,9 +197,7 @@ func SetupRouter(svc interface{}, v1Middleware ...gin.HandlerFunc) *gin.Engine {
 			c.JSON(http.StatusNotImplemented, gin.H{"error": "Hierarchical metadata not implemented"})
 		})
 
-		// Register constituencies by county route. Prefer explicit handler wiring
-		// when caller passed an *AppServices. Fall back to the existing runtime
-		// assertion behaviour for test flexibility.
+		// GET /api/v1/counties/:slug/constituencies
 		if svcApp, ok := svc.(*AppServices); ok && svcApp.Constituency != nil {
 			ch := NewConstituencyHandler(svcApp.Constituency)
 			v1.GET("/counties/:slug/constituencies", ch.ListByCounty)
@@ -236,13 +231,12 @@ func SetupRouter(svc interface{}, v1Middleware ...gin.HandlerFunc) *gin.Engine {
 			})
 		}
 
-		// Wire up sub-counties if available
+		// Sub-counties routes
 		if svcApp, ok := svc.(*AppServices); ok && svcApp.SubCounty != nil {
 			subCountyHdlr := NewSubCountyHandler(svcApp.SubCounty)
 			v1.GET("/sub-counties", subCountyHdlr.ListAll)
 			v1.GET("/counties/:slug/sub-counties", subCountyHdlr.ListByCounty)
 		} else {
-			// fallback explicitly returning 501 for sub-counties
 			v1.GET("/sub-counties", func(c *gin.Context) {
 				c.JSON(http.StatusNotImplemented, gin.H{"error": "ListAll SubCounties not implemented"})
 			})
@@ -251,7 +245,7 @@ func SetupRouter(svc interface{}, v1Middleware ...gin.HandlerFunc) *gin.Engine {
 			})
 		}
 
-		// Wire up wards if available
+		// Wards route
 		if svcApp, ok := svc.(*AppServices); ok && svcApp.Ward != nil {
 			wardHdlr := NewWardHandler(svcApp.Ward)
 			v1.GET("/wards", wardHdlr.ListAll)
@@ -261,12 +255,80 @@ func SetupRouter(svc interface{}, v1Middleware ...gin.HandlerFunc) *gin.Engine {
 			})
 		}
 
+		// Spatial Intersect route
+		if svcApp, ok := svc.(*AppServices); ok && svcApp.Spatial != nil {
+			spatialHdlr := NewSpatialHandler(svcApp.Spatial)
+			v1.POST("/spatial/intersect", spatialHdlr.HandleIntersect)
+		} else {
+			type spatialSvc interface {
+				SpatialIntersect(ctx context.Context, lat, lng float64) (service.SpatialResult, error)
+			}
+			v1.POST("/spatial/intersect", func(c *gin.Context) {
+				var req struct {
+					Lat float64 `json:"lat"`
+					Lng float64 `json:"lng"`
+				}
+				if err := c.ShouldBindJSON(&req); err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+					return
+				}
+				if s, ok := svc.(spatialSvc); ok {
+					res, err := s.SpatialIntersect(c.Request.Context(), req.Lat, req.Lng)
+					if err != nil {
+						c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+						return
+					}
+					var counties []*domain.County
+					if res.County != nil {
+						counties = append(counties, res.County)
+					}
+					fc := buildFeatureCollectionFromCounties(counties)
+					out, _ := json.Marshal(fc)
+					c.Data(http.StatusOK, "application/geo+json", out)
+					return
+				}
+				c.JSON(http.StatusNotImplemented, gin.H{"error": "SpatialIntersect not implemented in service"})
+			})
+		}
+	}
+
+	// Serve Static Developer Portal (React 19 SPA) with client-side routing fallback
+	staticDir := os.Getenv("STATIC_DIR")
+	if staticDir == "" {
+		staticDir = "./frontend/dist"
+	}
+
+	if info, err := os.Stat(staticDir); err == nil && info.IsDir() {
+		// Serve static assets directory
+		assetsDir := filepath.Join(staticDir, "assets")
+		if _, err := os.Stat(assetsDir); err == nil {
+			r.Static("/assets", assetsDir)
+		}
+
+		// Serve public root assets
+		for _, file := range []string{"favicon.ico", "vite.svg", "kenya-flag.svg"} {
+			filePath := filepath.Join(staticDir, file)
+			if _, err := os.Stat(filePath); err == nil {
+				r.StaticFile("/"+file, filePath)
+			}
+		}
+
+		// SPA Fallback: Any non-API GET route serves index.html so React Router handles navigation
+		r.NoRoute(func(c *gin.Context) {
+			if c.Request.Method == http.MethodGet && !strings.HasPrefix(c.Request.URL.Path, "/api") && c.Request.URL.Path != "/health" && c.Request.URL.Path != "/__routes" {
+				indexPath := filepath.Join(staticDir, "index.html")
+				if _, err := os.Stat(indexPath); err == nil {
+					c.File(indexPath)
+					return
+				}
+			}
+			c.JSON(http.StatusNotFound, gin.H{"error": "route not found"})
+		})
 	}
 
 	return r
 }
 
-// helpers to construct GeoJSON features/collections
 func buildFeatureCollectionFromCounties(counties []*domain.County) map[string]interface{} {
 	features := make([]interface{}, 0, len(counties))
 	for _, c := range counties {
@@ -305,7 +367,6 @@ func buildFeatureCollectionFromConstituencies(list []struct {
 }
 
 func buildFeature(geometry []byte, properties map[string]interface{}) map[string]interface{} {
-	// geometry is expected to be raw JSON bytes representing a geometry object
 	var geom json.RawMessage
 	if len(geometry) > 0 {
 		geom = json.RawMessage(geometry)
@@ -318,8 +379,3 @@ func buildFeature(geometry []byte, properties map[string]interface{}) map[string
 		"properties": properties,
 	}
 }
-
-// Note: we add a small helper on domain types usage where needed. If domain.Ward
-// does not expose a GeoJSON byte getter, we attempt to use GeoJSON string fields.
-// This file intentionally avoids making the handler depend on many service
-// implementation details; runtime assertions are used to keep compilation safe.
