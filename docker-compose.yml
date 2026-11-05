@@ -38,8 +38,6 @@ volumes:
     driver: local
   pgadmin_data:
     driver: local
-  redis_data:
-    driver: local
 
 secrets:
   postgres_password:

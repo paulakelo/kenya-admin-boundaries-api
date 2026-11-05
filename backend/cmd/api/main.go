@@ -20,17 +20,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/redis/go-redis/v9"
 )
-
-// noopCache is used when Redis is not configured or fails to initialize in dev.
-// It implements the CacheRepository interface used by service.NewCountyService.
-type noopCache struct{}
-
-func (n *noopCache) Get(ctx context.Context, key string) ([]byte, error) { return nil, nil }
-func (n *noopCache) Set(ctx context.Context, key string, value []byte, ttl time.Duration) error {
-	return nil
-}
 
 func main() {
 	// 1. Initialize Context
@@ -89,35 +79,13 @@ func main() {
 	inMemoryCache := cache.NewInMemoryCache()
 	defer inMemoryCache.Close()
 
-	// Initialize Redis client strictly for rate limiting during Milestone 1
-	var rdb *redis.Client
-	if cfg.RedisURL == "" {
-		log.Println("REDIS_URL not set; rate limiter running in best-effort local mode")
-		rdb = redis.NewClient(&redis.Options{Addr: "localhost:6379", Password: "", DB: 0})
-	} else {
-		addr := cfg.RedisURL
-		password := ""
-		if u, err := url.Parse(cfg.RedisURL); err == nil && u.Host != "" {
-			addr = u.Host
-			if u.User != nil {
-				if p, ok := u.User.Password(); ok {
-					password = p
-				}
-			}
-		}
-		rdb = redis.NewClient(&redis.Options{Addr: addr, Password: password, DB: 0})
-	}
-
-	// Attempt a lightweight ping to Redis for rate-limiting readiness
-	if rdb != nil {
-		if err := rdb.Ping(ctx).Err(); err != nil {
-			log.Printf("Warning: Redis ping failed for rate limiter: %v (rate limiter will fail open)\n", err)
-		}
-	}
+	// Initialize in-process rate limiter (60 requests per minute per IP)
+	rateLimiter := middleware.NewInProcessRateLimiter(60, time.Minute)
+	defer rateLimiter.Close()
 
 	spatialRepo := &repository.SpatialRepository{DB: dbPool}
 
-	// All services now utilize the high-speed in-process cache
+	// All services utilize the high-speed in-process cache
 	countySvc := service.NewCountyService(pgRepo, inMemoryCache, spatialRepo)
 	consSvc := service.NewConstituencyService(consRepo, inMemoryCache)
 	spatialSvc := service.NewSpatialService(sqlcQueries, inMemoryCache)
@@ -133,8 +101,8 @@ func main() {
 		Ward:         wardSvc,
 	}
 
-	// wire svc into handlers/router and apply rate limiter middleware to /api/v1
-	router := handler.SetupRouter(svc, middleware.RateLimiter(rdb, 60, time.Minute))
+	// wire svc into handlers/router and apply in-process rate limiter middleware to /api/v1
+	router := handler.SetupRouter(svc, rateLimiter.Middleware())
 
 	// Health endpoint (ensure SetupRouter sets other routes; this is a safe fallback)
 	router.GET("/health", func(c *gin.Context) {
@@ -187,10 +155,6 @@ func main() {
 
 	if err := srv.Shutdown(ctxShutdown); err != nil {
 		log.Fatalf("Server forced to shutdown: %v\n", err)
-	}
-
-	if rdb != nil {
-		rdb.Close()
 	}
 
 	log.Println("Server shut down successfully")
