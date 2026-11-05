@@ -8,7 +8,7 @@ import Sidebar from "../components/Sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Layers, X, ArrowLeft, BookOpen } from "lucide-react";
 
-const API_BASE = "http://localhost:18080/api/v1";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api/v1";
 type LayerType = "counties" | "constituencies";
 type BasemapType = "dark" | "osm" | "satellite";
 

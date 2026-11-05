@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, MapPin, Loader2 } from "lucide-react";
 
 
-const API_BASE = "http://localhost:18080/api/v1";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api/v1";
 
 interface CountyFeature {
   type: string;

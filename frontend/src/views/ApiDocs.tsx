@@ -60,7 +60,10 @@ export default function ApiDocs() {
       if (qs) resolved += `?${qs}`;
     }
 
-    return `http://localhost:18080${resolved}`;
+    const base = import.meta.env.VITE_API_BASE_URL
+      ? import.meta.env.VITE_API_BASE_URL.replace(/\/api\/v1\/?$/, "")
+      : "";
+    return `${base}${resolved}`;
   };
 
   const handleExecute = async () => {
@@ -148,7 +151,7 @@ export default function ApiDocs() {
           <p className="text-xs text-text-muted mt-2 flex items-center gap-1">
             <span>Base URL:</span>
             <code className="text-accent font-mono font-semibold bg-surface-sunken px-1.5 py-0.5 rounded border border-border-subtle">
-              http://localhost:18080
+              {import.meta.env.VITE_API_BASE_URL || (typeof window !== "undefined" ? window.location.origin : "/api/v1")}
             </code>
           </p>
         </header>
