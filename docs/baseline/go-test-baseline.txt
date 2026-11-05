@@ -1,0 +1,67 @@
+?   	github.com/paula-dot/kenya-admin-boundaries-api/backend/cmd/api	[no test files]
+?   	github.com/paula-dot/kenya-admin-boundaries-api/frontend/node_modules/flatted/golang/pkg/flatted	[no test files]
+?   	github.com/paula-dot/kenya-admin-boundaries-api/internal/cache	[no test files]
+?   	github.com/paula-dot/kenya-admin-boundaries-api/internal/config	[no test files]
+?   	github.com/paula-dot/kenya-admin-boundaries-api/internal/domain	[no test files]
+?   	github.com/paula-dot/kenya-admin-boundaries-api/internal/dto	[no test files]
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /api/v1/counties          --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func2 (5 handlers)
+[GIN-debug] GET    /api/v1/constituencies    --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func3 (5 handlers)
+[GIN-debug] GET    /api/v1/counties/:slug    --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func4 (5 handlers)
+[GIN-debug] GET    /api/v1/counties/:slug/hierarchy --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func5 (5 handlers)
+[GIN-debug] GET    /api/v1/counties/:slug/constituencies --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func6 (5 handlers)
+[GIN-debug] GET    /api/v1/sub-counties      --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func7 (5 handlers)
+[GIN-debug] GET    /api/v1/counties/:slug/sub-counties --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func8 (5 handlers)
+[GIN-debug] GET    /api/v1/wards             --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func9 (5 handlers)
+2026/11/05 14:59:26 [REQ] Method=GET RequestURI=/api/v1/counties/test-slug URL.Path=/api/v1/counties/test-slug Host=example.com Referer= X-Forwarded-Host= X-Forwarded-Proto=
+[GIN] 2026/11/05 - 14:59:26 | 200 |     245.584µs |       192.0.2.1 | GET      "/api/v1/counties/test-slug"
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /api/v1/counties          --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func2 (5 handlers)
+[GIN-debug] GET    /api/v1/constituencies    --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func3 (5 handlers)
+[GIN-debug] GET    /api/v1/counties/:slug    --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func4 (5 handlers)
+[GIN-debug] GET    /api/v1/counties/:slug/hierarchy --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func5 (5 handlers)
+[GIN-debug] GET    /api/v1/counties/:slug/constituencies --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func6 (5 handlers)
+[GIN-debug] GET    /api/v1/sub-counties      --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func7 (5 handlers)
+[GIN-debug] GET    /api/v1/counties/:slug/sub-counties --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func8 (5 handlers)
+[GIN-debug] GET    /api/v1/wards             --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func9 (5 handlers)
+2026/11/05 14:59:26 [REQ] Method=POST RequestURI=/api/v1/spatial/intersect URL.Path=/api/v1/spatial/intersect Host=example.com Referer= X-Forwarded-Host= X-Forwarded-Proto=
+[GIN] 2026/11/05 - 14:59:26 | 404 |      10.591µs |       192.0.2.1 | POST     "/api/v1/spatial/intersect"
+--- FAIL: TestSpatialIntersectRoute (0.00s)
+    router_test.go:75: expected status 200 got 404: 404 page not found
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /api/v1/counties          --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func2 (5 handlers)
+[GIN-debug] GET    /api/v1/constituencies    --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func3 (5 handlers)
+[GIN-debug] GET    /api/v1/counties/:slug    --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func4 (5 handlers)
+[GIN-debug] GET    /api/v1/counties/:slug/hierarchy --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func5 (5 handlers)
+[GIN-debug] GET    /api/v1/counties/:slug/constituencies --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func6 (5 handlers)
+[GIN-debug] GET    /api/v1/sub-counties      --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func7 (5 handlers)
+[GIN-debug] GET    /api/v1/counties/:slug/sub-counties --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func8 (5 handlers)
+[GIN-debug] GET    /api/v1/wards             --> github.com/paula-dot/kenya-admin-boundaries-api/internal/handler.SetupRouter.func9 (5 handlers)
+2026/11/05 14:59:26 [REQ] Method=GET RequestURI=/api/v1/counties/KE001/constituencies URL.Path=/api/v1/counties/KE001/constituencies Host=example.com Referer= X-Forwarded-Host= X-Forwarded-Proto=
+[GIN] 2026/11/05 - 14:59:26 | 200 |      62.676µs |       192.0.2.1 | GET      "/api/v1/counties/KE001/constituencies"
+FAIL
+FAIL	github.com/paula-dot/kenya-admin-boundaries-api/internal/handler	0.009s
+?   	github.com/paula-dot/kenya-admin-boundaries-api/internal/middleware	[no test files]
+?   	github.com/paula-dot/kenya-admin-boundaries-api/internal/repository	[no test files]
+?   	github.com/paula-dot/kenya-admin-boundaries-api/internal/repository/postgres	[no test files]
+?   	github.com/paula-dot/kenya-admin-boundaries-api/internal/repository/redis	[no test files]
+ok  	github.com/paula-dot/kenya-admin-boundaries-api/internal/service	0.006s
+?   	github.com/paula-dot/kenya-admin-boundaries-api/pkg/db	[no test files]
+?   	github.com/paula-dot/kenya-admin-boundaries-api/pkg/geojson	[no test files]
+ok  	github.com/paula-dot/kenya-admin-boundaries-api/tests/integration	(cached)
+FAIL

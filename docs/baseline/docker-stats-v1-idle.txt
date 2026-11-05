@@ -1,0 +1,5 @@
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O        PIDS
+8222835762bf   pgadmin         0.03%     177.5MiB / 15.48GiB   1.12%     7.49kB / 126B     41.6MB / 0B      6
+961c72c6321f   spatial_api     0.00%     71.21MiB / 15.48GiB   0.45%     74.6MB / 81.9MB   7.32MB / 147kB   13
+3b1987a95037   spatial_pg      0.01%     34.98MiB / 15.48GiB   0.22%     89.1kB / 10.7MB   13.2MB / 537kB   7
+2a21fc0197ad   spatial_redis   1.03%     5.676MiB / 15.48GiB   0.04%     10.2MB / 61.8MB   23MB / 2.02MB    7

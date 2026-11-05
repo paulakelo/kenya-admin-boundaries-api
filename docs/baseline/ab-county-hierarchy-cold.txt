@@ -1,0 +1,42 @@
+This is ApacheBench, Version 2.3 <$Revision: 1934973 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 127.0.0.1 (be patient).....done
+
+
+Server Software:        
+Server Hostname:        127.0.0.1
+Server Port:            18080
+
+Document Path:          /api/v1/counties/KE047/hierarchy
+Document Length:        738 bytes
+
+Concurrency Level:      2
+Time taken for tests:   0.090 seconds
+Complete requests:      30
+Failed requests:        0
+Total transferred:      28050 bytes
+HTML transferred:       22140 bytes
+Requests per second:    333.17 [#/sec] (mean)
+Time per request:       6.003 [ms] (mean)
+Time per request:       3.001 [ms] (mean, across all concurrent requests)
+Transfer rate:          304.21 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    1   0.7      1       3
+Processing:     1    4   2.6      4      16
+Waiting:        1    4   2.4      3      14
+Total:          2    5   2.7      5      17
+
+Percentage of the requests served within a certain time (ms)
+  50%      5
+  66%      5
+  75%      6
+  80%      6
+  90%      8
+  95%      9
+  98%     17
+  99%     17
+ 100%     17 (longest request)
