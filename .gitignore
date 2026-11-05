@@ -98,4 +98,6 @@ aws_credentials
 *.swo
 DEPLOYMENT.md
 PROJECT_ARCHITECTURE.md
+.agents/
+
 docs/PROJECT_ARCHITECTURE.md
