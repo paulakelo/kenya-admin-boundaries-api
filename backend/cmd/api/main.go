@@ -101,8 +101,12 @@ func main() {
 		Ward:         wardSvc,
 	}
 
-	// wire svc into handlers/router and apply in-process rate limiter middleware to /api/v1
-	router := handler.SetupRouter(svc, rateLimiter.Middleware())
+	// wire svc into handlers/router and apply rate limiter + HTTP cache headers middleware to /api/v1
+	router := handler.SetupRouter(
+		svc,
+		rateLimiter.Middleware(),
+		middleware.HTTPCacheMiddleware(86400, 604800), // 24h max-age, 7d stale-while-revalidate
+	)
 
 	// Health endpoint (ensure SetupRouter sets other routes; this is a safe fallback)
 	router.GET("/health", func(c *gin.Context) {
