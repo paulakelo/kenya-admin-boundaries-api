@@ -14,6 +14,7 @@
 The `kenya-admin-boundaries-api` v1 architecture delivers administrative and electoral boundaries across Kenya down to the ward level. Before initiating our refactoring on the `refactor/lean-architecture` branch, we froze the v1 architecture with annotated tag `v1.0-redis-pgadmin` and archived the v1 architecture specification to [`docs/history/v1-architecture.md`](../history/v1-architecture.md).
 
 ### V1 Topology & Moving Parts
+
 In v1, the local container stack consists of 4 distinct services:
 1. **`spatial_pg` (`postgis/postgis:15-3.3`):** Relational spatial database with 2D GIST indexes, containing 47 counties, 290 constituencies, 412 sub-counties, and 1,450 wards (~35 MB total table storage).
 2. **`spatial_redis` (`redis:7-alpine`):** In-memory cache store storing 24-hour serialized GeoJSON strings and managing client IP rate limiting (fixed window of 60 req/min).
@@ -31,6 +32,7 @@ go test ./... -timeout 60s
 ```
 
 ### Empirical Test Findings
+
 * **`internal/service`**: `ok` (0.006s)
 * **`tests/integration`**: `ok` (0.010s) — *Skipped by default unless `INTEGRATION=true` is set, because it requires an active PostGIS connection pool.* When run with `INTEGRATION=true go test ./tests/integration -v -timeout 10s`, it passes in 0.207s against `127.0.0.1:5433`.
 * **`internal/handler`**: **`FAIL` (0.011s)**
@@ -85,6 +87,7 @@ Load testing was executed using ApacheBench (`/usr/bin/ab`) with `n=30` requests
 | `GET /api/v1/wards` | 200 OK | ~6.5 KB | 313.82 #/s | 5 ms | 9 ms | **349.08 #/s** | **5 ms** | **9 ms** |
 
 #### Observations
+
 1. **Heavy County GeoJSON Payload:** `GET /api/v1/counties` serializes and transfers **2.94 MB of GeoJSON per request** (all 47 county MultiPolygons). The bottleneck here is JSON serialization and network buffer transfer, averaging ~165ms p50 even when cached in Redis.
 2. **Lightweight Endpoints:** Hierarchical metadata and wards endpoints return in under 6ms p50 cold, dropping to 4ms warm.
 3. **Warm-Cache Throughput Gain:** Caching yields modest throughput gains on lightweight endpoints (333 -> 476 req/s on hierarchy) and drops p95 on `/counties` from 215ms to 182ms.
@@ -139,6 +142,7 @@ docker stats --no-stream pgadmin spatial_api spatial_pg spatial_redis
 ---
 
 ## 5. Milestone 0 Acceptance Checklist
+
 - [x] Working tree clean; `v1.0-redis-pgadmin` tag created at `cf539a7d29dae69807b0f02d094bc65ee2d62713`.
 - [x] Switched to branch `refactor/lean-architecture`.
 - [x] V1 architecture preserved at `docs/history/v1-architecture.md`.

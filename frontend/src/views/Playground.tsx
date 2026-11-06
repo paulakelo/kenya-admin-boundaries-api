@@ -68,9 +68,8 @@ export default function Playground() {
       {/* Collapsible Sidebar */}
       <aside
         aria-label="Administrative Boundaries Explorer"
-        className={`w-80 min-w-80 h-full transition-all duration-200 z-10 ${
-          isSidebarOpen ? "block" : "hidden"
-        }`}
+        className={`w-80 min-w-80 h-full transition-all duration-200 z-10 ${isSidebarOpen ? "block" : "hidden"
+          }`}
       >
         <Sidebar
           onCountySelect={handleCountySelect}

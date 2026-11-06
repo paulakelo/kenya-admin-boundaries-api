@@ -8,6 +8,7 @@
 ---
 
 ## 1. Context & Problem Statement
+
 Following Milestone 1, all spatial and GeoJSON caching was moved into the Go process memory (`InMemoryCache`). However, Redis 7 was still retained solely to perform fixed-window IP request counting for the rate-limiting middleware (`RateLimiter`).
 
 Retaining a Redis daemon exclusively for simple IP counting incurred:
@@ -18,6 +19,7 @@ Retaining a Redis daemon exclusively for simple IP counting incurred:
 ---
 
 ## 2. Decision
+
 1. **Implement In-Process Rate Limiter:** Implemented `InProcessRateLimiter` in [`internal/middleware/rate_limiter.go`](../../internal/middleware/rate_limiter.go) using standard Go synchronization (`sync.Mutex`) and a thread-safe map tracking per-IP request counters and window expiration with an automated 5-minute background sweep.
 2. **Purge Redis Repository:** Removed `internal/repository/redis/cache_repo.go`.
 3. **Purge Redis from Orchestration:** Removed the `redis` service and `redis_data` volume from [`docker-compose.yml`](../../docker-compose.yml) and [`docker-compose.override.yml`](../../docker-compose.override.yml).
@@ -37,11 +39,13 @@ Retaining a Redis daemon exclusively for simple IP counting incurred:
 ## 4. Consequences & Tradeoffs
 
 ### Positive (Gains)
+
 * **Zero Redis Moving Parts:** Container count reduced from 4 to 3 (`pgadmin`, `spatial_pg`, `spatial_api`).
 * **Smaller Binary & Supply Chain:** Removed `go-redis` and its sub-dependencies (`cespare/xxhash/v2`, `dgryski/go-rendezvous`) from `go.mod`.
 * **Zero Network Hop on Rate Limit Checks:** Every HTTP request evaluates rate limits in nanoseconds within Go heap memory.
 
 ### Negative (Downsides & Lost Capabilities)
+
 * **Distributed Rate Limiting:** In a multi-node cluster, each node maintains its own rate-limit table per IP rather than a unified global counter. For production architectures on prudent resources, global rate limiting is properly offloaded to the edge CDN (e.g., Cloudflare Free Tier).
 
 ---
@@ -65,6 +69,7 @@ grep -i redis go.mod
 ```
 
 ### Acceptance Criteria
+
 - [x] Redis service and volumes eliminated from Docker Compose.
 - [x] `github.com/redis/go-redis/v9` pruned from `go.mod`.
 - [x] In-process rate limiter successfully protects endpoints and sets rate limit headers.

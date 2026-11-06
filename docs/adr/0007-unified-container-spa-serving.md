@@ -8,6 +8,7 @@
 ---
 
 ## 1. Context & Problem Statement
+
 In v1, running the application required two disparate runtime paradigms:
 1. The Go backend mounted a host-compiled executable (`./bin/api`) into an Alpine shell, preventing standardized, reproducible builds on remote servers.
 2. The React 19 developer portal ran as a separate Node.js process requiring separate port management (port 5173 vs 18080), separate dev dependencies, and separate deployment targets.
@@ -17,6 +18,7 @@ To deploy on prudent resources (such as a single $3.50/mo VPS or container servi
 ---
 
 ## 2. Decision
+
 1. **Multi-Stage `Dockerfile` Pipeline:**
    Created a 3-stage reproducible build pipeline in [`Dockerfile`](../../Dockerfile):
    * **Stage 1 (`frontend-builder`):** Uses `node:22-alpine` to compile TypeScript and build the React 19 SPA (`npm ci && npm run build` -> `/app/frontend/dist`).
@@ -46,6 +48,7 @@ To deploy on prudent resources (such as a single $3.50/mo VPS or container servi
 ## 4. Consequences & Tradeoffs
 
 ### Positive (Gains)
+
 * **Single Unified Application Container:** The Go API and React developer portal are packaged into a single ~30 MB Docker image.
 * **Sub-20 MB Total Stack Memory:**
   * `spatial_api` runs in **~3.5 MiB RAM**.
@@ -54,6 +57,7 @@ To deploy on prudent resources (such as a single $3.50/mo VPS or container servi
 * **Same-Origin Delivery:** Eliminates all cross-origin pre-flight `OPTIONS` requests when users interact with the API docs console or map explorer.
 
 ### Negative (Downsides & Lost Capabilities)
+
 * Docker image build time takes ~2.5–3 minutes on initial build because `npm ci` and `go mod download` execute in Docker build stages (mitigated by Docker layer caching for subsequent builds).
 
 ---
@@ -78,6 +82,7 @@ curl -s http://localhost:18080/api/v1/counties | head -c 100
 ```
 
 ### Acceptance Criteria
+
 - [x] Multi-stage `Dockerfile` successfully produces self-contained runtime image.
 - [x] `docker-compose.yml` orchestrates exactly 2 services (`db` + `api`).
 - [x] Go server delivers static React SPA under `/` and handles `/docs` & `/map` SPA routing.

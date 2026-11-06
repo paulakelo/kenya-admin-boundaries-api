@@ -8,7 +8,8 @@
 ---
 
 ## 1. Context & Problem Statement
-In v1, all administrative boundary GeoJSON payloads (Counties, Constituencies, Sub-Counties, Wards, and Spatial Intersections) were cached in an external Redis 7 container with a 24-hour TTL. 
+
+In v1, all administrative boundary GeoJSON payloads (Counties, Constituencies, Sub-Counties, Wards, and Spatial Intersections) were cached in an external Redis 7 container with a 24-hour TTL.
 
 Every cache read required:
 1. TCP network socket round-trip between Go API and Redis.
@@ -20,6 +21,7 @@ Because Kenya's administrative boundaries are read-only reference data (~35 MB t
 ---
 
 ## 2. Decision
+
 1. **Activate In-Process Caching:** Enhanced [`internal/cache/memcache.go`](../../internal/cache/memcache.go) to provide a thread-safe (`sync.RWMutex`), TTL-aware in-process memory cache with an automatic background sweep (janitor) that purges expired entries every 10 minutes.
 2. **Decouple Spatial Service:** Refactored `SpatialService` in [`internal/service/spatial_service.go`](../../internal/service/spatial_service.go) to depend on the `CacheRepository` interface (`Get`, `Set`) rather than a direct `*redis.Client` struct pointer.
 3. **Wire In-Process Cache via Dependency Injection:** In [`backend/cmd/api/main.go`](../../backend/cmd/api/main.go), instantiated `cache.NewInMemoryCache()` and injected it into all five core domain services (`CountyService`, `ConstituencyService`, `SpatialService`, `SubCountyService`, `WardService`).
@@ -41,11 +43,13 @@ Because Kenya's administrative boundaries are read-only reference data (~35 MB t
 ## 4. Consequences & Tradeoffs
 
 ### Positive (Gains)
+
 * **Zero Network Latency on Cache Hits:** Memory lookups happen within nanoseconds in process memory without TCP overhead.
 * **Clean Architecture Compliance:** `SpatialService` no longer violates the Dependency Inversion Principle; all services now share the same `CacheRepository` interface.
 * **Reduced Redis Utilization:** Redis memory drops to strictly storing transient rate-limit counters (< 2MB).
 
 ### Negative (Downsides & Lost Capabilities)
+
 * **Process Lifetime Bound:** In-process cache is cold when the API process restarts. The first request after startup queries PostGIS before warming.
 * **Multi-Instance Redundancy:** If the API is horizontally scaled across multiple instances without a reverse-proxy cache, each instance maintains its own in-memory cache. (For single-VM budget deployments, this is irrelevant).
 
@@ -70,6 +74,7 @@ docker exec spatial_redis redis-cli KEYS "*"
 ```
 
 ### Acceptance Criteria
+
 - [x] All 5 services consume `service.CacheRepository` implemented by `cache.InMemoryCache`.
 - [x] `SpatialService` has no dependency on `*redis.Client`.
 - [x] Cache unit tests pass with concurrency and TTL validation.

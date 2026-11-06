@@ -8,6 +8,7 @@
 ---
 
 ## 1. Context & Problem Statement
+
 In v1, several core views in the React 19 + Vite frontend ([`Sidebar.tsx`](../../frontend/src/components/Sidebar.tsx), [`Playground.tsx`](../../frontend/src/views/Playground.tsx), and [`ApiDocs.tsx`](../../frontend/src/views/ApiDocs.tsx)) had `http://localhost:18080` hardcoded into their network request logic.
 
 This rigid coupling caused several issues:
@@ -18,6 +19,7 @@ This rigid coupling caused several issues:
 ---
 
 ## 2. Decision
+
 1. **Adopt `VITE_API_BASE_URL` with Relative Default:**
    Replaced all hardcoded `http://localhost:18080` references with Vite's client-side environment variable standard:
    ```ts
@@ -42,11 +44,13 @@ This rigid coupling caused several issues:
 ## 4. Consequences & Tradeoffs
 
 ### Positive (Gains)
+
 * **Portable Frontend Artifacts:** The built bundle (`frontend/dist`) can be deployed to any static host (Cloudflare Pages, S3, Netlify) or served directly by the Go backend.
 * **Zero CORS Overhead when Co-Hosted:** Using same-origin relative URLs (`/api/v1`) avoids HTTP `OPTIONS` pre-flight requests.
 * **Full Build Verification:** TypeScript compilation (`tsc -b`) and Vite production bundle pass without errors.
 
 ### Negative (Downsides & Lost Capabilities)
+
 * If running Vite in local standalone development (`npm run dev` on port 5173) without setting `VITE_API_BASE_URL`, relative requests to `/api/v1` require Vite proxy configuration or setting `VITE_API_BASE_URL=http://localhost:18080/api/v1`.
 
 ---
@@ -64,6 +68,7 @@ grep -rn "18080" frontend/src/
 ```
 
 ### Acceptance Criteria
+
 - [x] Hardcoded `http://localhost:18080` replaced with `VITE_API_BASE_URL` in `Sidebar.tsx`, `Playground.tsx`, and `ApiDocs.tsx`.
 - [x] Frontend builds cleanly with zero errors.
 - [x] Relative `/api/v1` default enables same-origin hosting.

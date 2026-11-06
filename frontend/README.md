@@ -1,73 +1,86 @@
-# React + TypeScript + Vite
+# Kenya Administrative Boundaries — Frontend Developer Portal (`kenya-admin-ui`)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A high-performance Developer Portal and Geospatial Explorer for Kenya's administrative and electoral boundaries, built with React 19, TypeScript, Vite 7, and Tailwind CSS v4.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features & Architecture
 
-## React Compiler
+* **API-First Developer Landing Page (`/`):** Telemetry dashboard showcasing live administrative coverage (47 counties, 290 constituencies, 412 sub-counties, 1,450 wards) with quickstart code snippets.
+* **Interactive API Documentation & Console (`/docs`):** Swagger/Postman-grade API console allowing developers to test endpoints in real time against the backend with automatic parameter inputs, JSON syntax highlighting, and multi-language code generators (cURL, JavaScript, Python, Go).
+* **Interactive Geospatial Map Explorer (`/map`):** Dynamic boundary visualization using Leaflet and React-Leaflet with county search filtering, constituency polygon zoom, and multi-basemap switching (Esri World Dark Canvas, OpenStreetMap Standard, Esri Satellite).
+* **Nexus Design System:** WCAG 2.1 AA compliant dark-mode interface featuring a 3-tier off-black surface layering (`#111216`, `#181920`, `#22242F`) to eliminate astigmatism halation, a strict 8px spatial grid, and an Electric Lime developer accent (`#C4F82A`).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Directory Structure
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+frontend/
+├── public/                    # Static assets, fonts, icons, and basemap markers
+├── src/
+│   ├── components/            # Reusable UI primitives and section components
+│   │   ├── Landing.tsx        # Hero banner, telemetry HUD, quickstart snippets
+│   │   ├── Map.tsx            # Leaflet map container and GeoJSON layer renderers
+│   │   └── Sidebar.tsx        # Collapsible boundary search and administrative hierarchy drawer
+│   ├── data/                  # Centralized data definitions (DRY)
+│   │   ├── apiEndpoints.ts    # Comprehensive API endpoint metadata and parameter schemas
+│   │   └── portalContent.ts   # Copywriting, telemetry metrics, and technical specifications
+│   ├── views/                 # Top-level client route views
+│   │   ├── LandingPage.tsx    # Root landing experience
+│   │   ├── ApiDocs.tsx        # Interactive API documentation & live query console
+│   │   └── Playground.tsx     # Map explorer with boundary hierarchy sidebar
+│   ├── App.tsx                # App routing layout and global header
+│   ├── index.css              # Tailwind CSS v4 token definitions and utility classes
+│   └── main.tsx               # React 19 application entry point
+├── package.json               # Dependencies and build scripts
+└── vite.config.ts             # Vite 7 build configuration with Tailwind plugin
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Environment Configuration
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The frontend dynamically resolves its API backend using the `VITE_API_BASE_URL` environment variable:
+
+```bash
+# Optional: Set in .env or during build (defaults to "/api/v1")
+VITE_API_BASE_URL=/api/v1
 ```
+
+* **Production (Unified Container):** When served by the Go backend on port `18080`, `VITE_API_BASE_URL` defaults to relative `/api/v1`. This guarantees **same-origin requests**, eliminating CORS preflight `OPTIONS` requests entirely.
+* **Standalone Development:** If running Vite separately from the backend on port `5173`, create a `.env.local` file:
+  ```env
+  VITE_API_BASE_URL=http://localhost:18080/api/v1
+  ```
+
+---
+
+## Development & Build Commands
+
+All commands should be executed from within the `frontend/` directory (or with `--prefix frontend`):
+
+```bash
+# Install dependencies
+npm install
+
+# Start local Vite development server with HMR
+npm run dev
+
+# Run TypeScript type check and production bundle build
+npm run build
+
+# Run ESLint validation
+npm run lint
+
+# Preview the built production bundle locally
+npm run preview
+```
+
+---
+
+## Accessibility & Standards
+
+* **Semantic HTML5:** Built with native landmarks (`<header>`, `<nav>`, `<aside>`, `<main>`, `<section>`, `<footer>`).
+* **Keyboard Navigation:** Explicit `:focus-visible` focus rings across all tabs, buttons, accordion triggers, and inputs.
+* **Astigmatism Protection:** Avoids pure `#000000` on `#FFFFFF` high-contrast jarring by using balanced off-black surface layering.

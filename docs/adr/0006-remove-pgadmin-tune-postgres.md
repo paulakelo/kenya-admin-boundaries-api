@@ -8,6 +8,7 @@
 ---
 
 ## 1. Context & Problem Statement
+
 In the baseline measurements (ADR 0001), `pgadmin` accounted for **177.5 MiB out of 258.7 MiB (68.6%)** of total post-load container memory. pgAdmin provided zero user-facing functionality and served solely as a developer database visualizer.
 
 Furthermore, the default PostgreSQL configuration allocated standard server-sized buffer pools and connection limits (`max_connections=100`, `shared_buffers=128MB`), which exceeded the requirements of an immutable ~35 MB reference dataset.
@@ -17,6 +18,7 @@ Running an unnecessary web GUI container and untuned database configurations pre
 ---
 
 ## 2. Decision
+
 1. **Eliminate pgAdmin from Orchestration:**
    Removed the `pgadmin` service and its associated volume `pgadmin_data` from [`docker-compose.yml`](../../docker-compose.yml) and [`docker-compose.override.yml`](../../docker-compose.override.yml).
    *Database administration is now handled via SSH tunneling and local client utilities (TablePlus, DBeaver, or `psql`).*
@@ -83,6 +85,7 @@ curl -s -o /dev/null -w "%{http_code}\n" http://localhost:18080/api/v1/counties
 ```
 
 ### Acceptance Criteria
+
 - [x] `pgadmin` service and volumes removed from all compose files.
 - [x] PostgreSQL configured with memory constraints (`shared_buffers=64MB`, `max_connections=25`).
 - [x] Total container stack memory drops from ~258 MB to under 30 MB.

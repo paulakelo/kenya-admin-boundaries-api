@@ -1,57 +1,58 @@
-# ADR [NNNN]: [Short Title of the Decision]
+# ADR NNNN: [Short Imperative Title]
 
-* **Status:** Proposed | Accepted | Deprecated | Superseded by [ADR-XXXX]
+* **Status:** Proposed | Accepted | Deprecated | Superseded by [ADR-XXXX](XXXX-title.md)
 * **Date:** YYYY-MM-DD
-* **Authors:** Paula / Engineering Team
-* **Milestone:** Milestone [N]
+* **Authors:** [Author Name/Handle]
+* **Milestone:** Milestone N ([Milestone Title])
 
 ---
 
 ## 1. Context & Problem Statement
-*What problem are we trying to solve? What is the current architectural situation?*
-*Include relevant technical constraints, metrics, data scale, and pain points.*
+
+[What is the context, architectural state, dataset characteristics, or resource constraint driving this decision? Include empirical baseline numbers where available.]
 
 ---
 
 ## 2. Decision
-*What architectural change or pattern are we choosing to adopt?*
-*Be clear and specific about the design and the scope of implementation.*
+
+[What architectural, infrastructure, or code change was made? State clearly and directly. List modified components, interfaces, or configuration keys.]
 
 ---
 
 ## 3. Alternatives Considered
-*What other viable designs, tools, or patterns were evaluated, and why were they rejected?*
 
-* **Alternative 1: [Name]**
-  * *Why rejected:* [Detailed technical rationale]
-* **Alternative 2: [Name]**
-  * *Why rejected:* [Detailed technical rationale]
+* **[Alternative 1]:**
+  * *Why rejected:* [Technical explanation of why this was passed over.]
+* **[Alternative 2]:**
+  * *Why rejected:* [Technical explanation of why this was passed over.]
 
 ---
 
 ## 4. Consequences & Tradeoffs
-*What becomes easier, and what becomes harder or is lost as a result of this decision?*
-*Be transparent and honest about downsides, operational changes, and risks.*
 
 ### Positive (Gains)
-* [e.g. Memory reduction, simplified deployment, lower latency]
+
+* [Concrete benefit, performance improvement, memory reduction, simplicity gain]
 
 ### Negative (Downsides & Lost Capabilities)
-* [e.g. Loss of multi-node shared cache, state lost on process restarts]
 
-### Neutral / Operational Impacts
-* [e.g. Monitoring changes, tooling changes]
+* [What capability is lost? What edge case must now be handled differently?]
+
+### Neutral / Operational Impact
+
+* [Any operational, build, or developer workflow changes that are neither pure wins nor pure losses]
 
 ---
 
 ## 5. How to Verify
-*Exact, reproducible commands to verify that the decision is correctly implemented and performing as intended.*
+
+[Exact shell commands, tests, or curl commands a reviewer or user can run to independently verify this milestone.]
 
 ```bash
-# 1. Verification command 1
-# 2. Verification command 2
+# Verification commands here
 ```
 
 ### Acceptance Criteria
-- [ ] Criterion 1
-- [ ] Criterion 2
+
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]

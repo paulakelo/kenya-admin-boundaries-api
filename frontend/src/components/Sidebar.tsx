@@ -186,11 +186,10 @@ export default function Sidebar({
               return (
                 <AccordionItem
                   key={code}
-                  className={`border rounded-lg overflow-hidden transition-all ${
-                    isSelected
+                  className={`border rounded-lg overflow-hidden transition-all ${isSelected
                       ? "bg-surface-overlay border-border-strong border-l-2 border-l-accent shadow-xs"
                       : "border-border-subtle bg-surface-base hover:bg-surface-raised"
-                  }`}
+                    }`}
                 >
                   <AccordionTrigger
                     className="py-2.5 px-3 text-xs font-medium hover:no-underline"
@@ -199,9 +198,8 @@ export default function Sidebar({
                     <div className="flex items-center justify-between w-full pr-2">
                       <div className="flex items-center gap-2">
                         <MapPin
-                          className={`h-3.5 w-3.5 ${
-                            isSelected ? "text-accent" : "text-text-muted"
-                          }`}
+                          className={`h-3.5 w-3.5 ${isSelected ? "text-accent" : "text-text-muted"
+                            }`}
                         />
                         <span className={isSelected ? "font-bold text-text-heading" : "text-text-body"}>
                           {name}
@@ -221,22 +219,20 @@ export default function Sidebar({
                           <button
                             type="button"
                             onClick={() => setViewDetail("subcounties")}
-                            className={`flex-1 py-1 rounded font-medium transition-all text-center cursor-pointer ${
-                              viewDetail === "subcounties"
+                            className={`flex-1 py-1 rounded font-medium transition-all text-center cursor-pointer ${viewDetail === "subcounties"
                                 ? "bg-accent text-black font-bold shadow-xs"
                                 : "text-text-muted hover:text-text-heading hover:bg-surface-overlay"
-                            }`}
+                              }`}
                           >
                             Sub-Counties ({subCountiesList ? subCountiesList.length : "…"})
                           </button>
                           <button
                             type="button"
                             onClick={() => setViewDetail("constituencies")}
-                            className={`flex-1 py-1 rounded font-medium transition-all text-center cursor-pointer ${
-                              viewDetail === "constituencies"
+                            className={`flex-1 py-1 rounded font-medium transition-all text-center cursor-pointer ${viewDetail === "constituencies"
                                 ? "bg-rose-500 text-white font-bold shadow-xs"
                                 : "text-text-muted hover:text-text-heading hover:bg-surface-overlay"
-                            }`}
+                              }`}
                           >
                             Constituencies ({constituencyList ? constituencyList.length : "…"})
                           </button>
@@ -285,22 +281,20 @@ export default function Sidebar({
                                     e.stopPropagation();
                                     onConstituencySelect?.(cCode, cName);
                                   }}
-                                  className={`w-full text-left text-[11px] pl-2.5 pr-2 py-1.5 border-l-2 transition-all flex items-center justify-between rounded-r group cursor-pointer ${
-                                    isCSelected
+                                  className={`w-full text-left text-[11px] pl-2.5 pr-2 py-1.5 border-l-2 transition-all flex items-center justify-between rounded-r group cursor-pointer ${isCSelected
                                       ? "border-rose-400 bg-rose-500/25 text-white font-semibold shadow-xs"
                                       : "border-rose-500/50 bg-surface-base text-text-body hover:border-rose-400 hover:text-white hover:bg-rose-500/15"
-                                  }`}
+                                    }`}
                                   title={`Click to view and zoom to ${cName}`}
                                 >
                                   <span className="truncate text-text-body group-hover:text-text-heading font-medium">
                                     {cName}
                                   </span>
                                   <span
-                                    className={`text-[9px] font-mono shrink-0 ml-1.5 ${
-                                      isCSelected
+                                    className={`text-[9px] font-mono shrink-0 ml-1.5 ${isCSelected
                                         ? "text-rose-300 font-bold"
                                         : "text-text-muted group-hover:text-text-body"
-                                    }`}
+                                      }`}
                                   >
                                     {cCode}
                                   </span>

@@ -100,6 +100,7 @@ Check the memory footprint:
 ```bash
 docker stats --no-stream
 ```
+
 *(Total memory consumption across both containers is ~18 MiB at idle!)*
 
 ### 2. Local Development (Optional)

@@ -176,11 +176,10 @@ export default function ApiDocs() {
                           setLiveResponse(null);
                           setStatus(null);
                         }}
-                        className={`w-full text-left px-3 py-2.5 rounded-md text-xs transition-colors flex items-center justify-between group cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none ${
-                          active
+                        className={`w-full text-left px-3 py-2.5 rounded-md text-xs transition-colors flex items-center justify-between group cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none ${active
                             ? "bg-surface-overlay text-text-heading font-semibold border-l-2 border-l-accent border-y border-r border-border-strong shadow-xs"
                             : "text-text-body hover:bg-surface-raised hover:text-text-heading border border-transparent"
-                        }`}
+                          }`}
                       >
                         <div className="truncate pr-2">
                           <div className="truncate text-xs font-medium">{ep.summary}</div>
@@ -277,11 +276,10 @@ export default function ApiDocs() {
                                 onClick={() =>
                                   setParamValues((prev) => ({ ...prev, [p.name]: qs.code }))
                                 }
-                                className={`text-xs px-2.5 py-1 rounded border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent ${
-                                  paramValues[p.name] === qs.code
+                                className={`text-xs px-2.5 py-1 rounded border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent ${paramValues[p.name] === qs.code
                                     ? "bg-accent text-black font-bold border-accent shadow-xs"
                                     : "bg-surface-sunken text-text-body border-border-subtle hover:text-text-heading hover:border-border-strong"
-                                }`}
+                                  }`}
                               >
                                 {qs.name} ({qs.code})
                               </button>
@@ -370,11 +368,10 @@ export default function ApiDocs() {
                       role="tab"
                       aria-selected={language === lang}
                       onClick={() => setLanguage(lang)}
-                      className={`px-2.5 py-1 rounded font-mono uppercase font-semibold text-xs transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent ${
-                        language === lang
+                      className={`px-2.5 py-1 rounded font-mono uppercase font-semibold text-xs transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent ${language === lang
                           ? "bg-surface-raised text-accent border border-border-subtle shadow-xs"
                           : "text-text-muted hover:text-text-heading"
-                      }`}
+                        }`}
                     >
                       {lang}
                     </button>
@@ -456,11 +453,10 @@ export default function ApiDocs() {
                   </h3>
                   {status !== null && (
                     <span
-                      className={`font-mono text-xs font-bold px-2 py-0.5 rounded ${
-                        status >= 200 && status < 300
+                      className={`font-mono text-xs font-bold px-2 py-0.5 rounded ${status >= 200 && status < 300
                           ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
                           : "bg-rose-500/20 text-rose-300 border border-rose-500/40"
-                      }`}
+                        }`}
                     >
                       {status} OK
                     </span>
